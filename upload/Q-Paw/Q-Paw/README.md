@@ -14,7 +14,8 @@
 
 | Feature | Description |
 |---------|-------------|
-| 🔌 **Plug & Play** | Insert USB, run `setup.bat` to install, then `launch.bat` to start |
+| 🖥️ **QPaw.exe** | One-click menu — install, launch, configure, manage models (755KB) |
+| 🔌 **Plug & Play** | Insert USB, double-click `QPaw.exe` to start |
 | 🚀 **Portable Data** | All config and data stay on the USB drive — no traces on host PC |
 | ⚡ **uv + pip** | Default uv (10-100x faster), fallback to pip — Chinese mirrors |
 | 📦 **No Default Model Download** | Online mode by default; download models on demand |
@@ -26,7 +27,12 @@
 
 ## Quick Start
 
-**Windows:**
+**Windows (Recommended):**
+```
+Double-click QPaw.exe     → Visual menu, one-click everything
+```
+
+**Or use scripts directly:**
 ```
 Double-click setup.bat    → Install environment
 Double-click launch.bat   → Launch QwenPaw
@@ -55,6 +61,7 @@ Setup will automatically:
 
 ```
 Q-Paw/                          ← USB Root
+├── QPaw.exe                    # 🖥️ One-click menu (755KB, standalone)
 ├── launch.bat                  # Windows launcher
 ├── launch.sh                   # macOS/Linux launcher
 ├── setup.bat                   # Windows setup
@@ -152,7 +159,7 @@ Q-Paw uses **uv** as the default package manager (10-100x faster than pip), with
 ## FAQ
 
 ### Q: Can I just plug in and use it?
-Run `setup.bat` (Windows) or `./setup.sh` (macOS/Linux) first to install Python and dependencies. After that, launch anytime.
+Double-click `QPaw.exe` (Windows) and select [1] to install, or run `setup.bat` / `./setup.sh` first. After that, launch anytime.
 
 ### Q: Do I have to download models?
 No! Online mode works without local models. You just need network + API Key.
@@ -161,12 +168,13 @@ No! Online mode works without local models. You just need network + API Key.
 No. All data is stored on the USB `data/` directory. Consider backing up to your computer regularly.
 
 ### Q: How to upgrade without losing data?
-Run `migrate.bat` (Windows) or `migrate.sh` (macOS/Linux) to merge data from the old Q-Paw directory.
+Use `QPaw.exe` → [5] 数据迁移, or run `migrate.bat` (Windows) / `migrate.sh` (macOS/Linux).
 
 ### Q: How to update QwenPaw to the latest version?
-Two ways to update:
-1. **Script**: Double-click `update.bat` (Windows) or run `./update.sh` (macOS/Linux)
-2. **Manual**: Run `uv pip install --upgrade qwenpaw` or `python -m pip install --upgrade qwenpaw`
+Three ways to update:
+1. **QPaw.exe** → Select [4] Update
+2. **Script**: Double-click `update.bat` (Windows) or run `./update.sh` (macOS/Linux)
+3. **Manual**: Run `uv pip install --upgrade qwenpaw` or `python -m pip install --upgrade qwenpaw`
 
 The update script will also update `modelscope` SDK and `uv` package manager.
 

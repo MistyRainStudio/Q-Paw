@@ -12,7 +12,8 @@
 
 | 特点 | 说明 |
 |------|------|
-| 🔌 **即插即用** | 插入U盘，运行 `setup.bat` 安装，再运行 `launch.bat` 启动 |
+| 🖥️ **QPaw.exe** | 一键菜单 — 安装、启动、配置、管理模型（仅 755KB） |
+| 🔌 **即插即用** | 插入U盘，双击 `QPaw.exe` 即可使用 |
 | 🚀 **随拔即走** | 所有配置和数据保存在U盘，拔出不留痕迹 |
 | ⚡ **uv + pip** | 默认使用 uv（比 pip 快 10-100 倍），不可用时自动回退到 pip |
 | 📦 **模型不默认下载** | 默认在线模式，按需下载或导入本地模型 |
@@ -24,7 +25,12 @@
 
 ## 快速开始
 
-**Windows：**
+**Windows（推荐）：**
+```
+双击 QPaw.exe             → 可视化菜单，一键搞定
+```
+
+**或直接使用脚本：**
 ```
 双击 setup.bat            → 安装环境
 双击 launch.bat           → 启动 QwenPaw
@@ -56,6 +62,7 @@ chmod +x setup.sh && ./setup.sh     # 安装
 
 ```
 Q-Paw/                          ← U盘根目录
+├── QPaw.exe                    # 🖥️ 一键菜单（755KB，独立运行）
 ├── launch.bat / .sh            # 启动脚本
 ├── setup.bat / .sh             # 初始化安装脚本
 ├── model-manager.bat / .sh     # 模型管理器
@@ -90,6 +97,7 @@ Q-Paw/                          ← U盘根目录
 | **离线模式** | ❌ | ✅ | 使用本地模型推理，完全离线运行，数据不出U盘 |
 
 切换方式：
+- 通过 `QPaw.exe` → [6] 配置 → 切换运行模式
 - 通过 `model-manager` 脚本一键切换
 - 或手动编辑 `config/portable.env` 中的 `QP_MODEL_MODE=online` / `local`
 
@@ -151,18 +159,19 @@ Q-Paw 继承 QwenPaw 的三层安全防护体系：
 ## 常见问题
 
 ### Q：插上U盘就能直接用吗？
-需要先运行一次 `setup.bat`（Windows）或 `./setup.sh`（macOS/Linux）完成初始化。之后每次插入U盘双击 `launch.bat` 启动即可。
+双击 `QPaw.exe` 选择 [1] 安装环境，或运行 `setup.bat` / `./setup.sh` 完成初始化。之后每次插入U盘双击启动即可。
 
 ### Q：不用本地模型可以吗？
 完全可以！默认就是在线模式，通过云端 API 使用 AI，不需要下载任何模型。
 
 ### Q：如何升级 Q-Paw 且不丢失数据？
-运行 `migrate.bat`（Windows）或 `migrate.sh`（macOS/Linux），从旧版 Q-Paw 目录合并数据。
+使用 `QPaw.exe` → [5] 数据迁移，或运行 `migrate.bat` / `migrate.sh`。
 
 ### Q：如何更新 QwenPaw 到最新版本？
-两种方式更新：
-1. **脚本**：双击 `update.bat`（Windows）或运行 `./update.sh`（macOS/Linux）
-2. **手动**：运行 `uv pip install --upgrade qwenpaw` 或 `python -m pip install --upgrade qwenpaw`
+三种方式更新：
+1. **QPaw.exe** → 选择 [4] 更新
+2. **脚本**：双击 `update.bat`（Windows）或运行 `./update.sh`（macOS/Linux）
+3. **手动**：运行 `uv pip install --upgrade qwenpaw` 或 `python -m pip install --upgrade qwenpaw`
 
 更新脚本会同时更新 `modelscope` SDK 和 `uv` 包管理器。
 
