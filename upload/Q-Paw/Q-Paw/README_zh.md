@@ -30,15 +30,16 @@
 双击 QPaw.exe             → 可视化菜单，一键搞定
 ```
 
-**或直接使用脚本：**
+**或直接使用脚本（Windows/ 目录下）：**
 ```
-双击 setup.bat            → 安装环境
-双击 launch.bat           → 启动 QwenPaw
-双击 model-manager.bat    → 管理模型
+双击 Windows\setup.bat            → 安装环境
+双击 Windows\launch.bat           → 启动 QwenPaw
+双击 Windows\model-manager.bat    → 管理模型
 ```
 
-**macOS / Linux：**
+**macOS / Linux（macOS_Linux/ 目录下）：**
 ```bash
+cd macOS_Linux
 chmod +x setup.sh && ./setup.sh     # 安装
 ./launch.sh                          # 启动
 ./model-manager.sh                   # 管理模型
@@ -63,14 +64,24 @@ chmod +x setup.sh && ./setup.sh     # 安装
 ```
 Q-Paw/                          ← U盘根目录
 ├── QPaw.exe                    # 🖥️ 一键菜单（755KB，独立运行）
-├── launch.bat / .sh            # 启动脚本
-├── setup.bat / .sh             # 初始化安装脚本
-├── model-manager.bat / .sh     # 模型管理器
-├── migrate.bat / .sh           # 迁移工具
-├── cleanup.bat                 # 清理工具
-├── update.bat / .sh            # 更新脚本（更新 uv + QwenPaw + modelscope）
 │
-├── bin/                        # uv.exe + 其他二进制
+├── Windows/                    # Windows 脚本
+│   ├── setup.bat               # 初始化安装
+│   ├── launch.bat              # 启动 QwenPaw
+│   ├── model-manager.bat       # 模型管理器
+│   ├── update.bat              # 更新（uv + QwenPaw + modelscope）
+│   ├── migrate.bat             # 数据迁移
+│   └── cleanup.bat             # 清理缓存
+│
+├── macOS_Linux/                # macOS / Linux 脚本
+│   ├── setup.sh
+│   ├── launch.sh
+│   ├── model-manager.sh
+│   ├── update.sh
+│   ├── migrate.sh
+│   └── cleanup.sh
+│
+├── bin/                        # uv.exe + uvx.exe + 其他二进制
 ├── python/                     # Windows 便携 Python (Embedded)
 ├── python-macos/               # macOS 便携 Python (Miniconda)
 ├── python-linux/               # Linux 便携 Python (Miniconda)

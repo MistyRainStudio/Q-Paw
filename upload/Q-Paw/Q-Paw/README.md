@@ -32,15 +32,16 @@
 Double-click QPaw.exe     → Visual menu, one-click everything
 ```
 
-**Or use scripts directly:**
+**Or use scripts directly (in Windows/ folder):**
 ```
-Double-click setup.bat    → Install environment
-Double-click launch.bat   → Launch QwenPaw
-Double-click model-manager.bat  → Manage models
+Double-click Windows\setup.bat    → Install environment
+Double-click Windows\launch.bat   → Launch QwenPaw
+Double-click Windows\model-manager.bat  → Manage models
 ```
 
-**macOS / Linux:**
+**macOS / Linux (in macOS_Linux/ folder):**
 ```bash
+cd macOS_Linux
 chmod +x setup.sh && ./setup.sh     # Install
 ./launch.sh                          # Launch
 ./model-manager.sh                   # Manage models
@@ -62,19 +63,24 @@ Setup will automatically:
 ```
 Q-Paw/                          ← USB Root
 ├── QPaw.exe                    # 🖥️ One-click menu (755KB, standalone)
-├── launch.bat                  # Windows launcher
-├── launch.sh                   # macOS/Linux launcher
-├── setup.bat                   # Windows setup
-├── setup.sh                    # macOS/Linux setup
-├── model-manager.bat           # Windows model manager
-├── model-manager.sh            # macOS/Linux model manager
-├── migrate.bat                 # Windows migration tool
-├── migrate.sh                  # macOS/Linux migration tool
-├── cleanup.bat                 # Windows cleanup utility
-├── update.bat                  # Windows update script
-├── update.sh                   # macOS/Linux update script
 │
-├── bin/                        # uv.exe + other binaries
+├── Windows/                    # Windows scripts
+│   ├── setup.bat               # Initialize environment
+│   ├── launch.bat              # Launch QwenPaw
+│   ├── model-manager.bat       # Model manager
+│   ├── update.bat              # Update (uv + QwenPaw + modelscope)
+│   ├── migrate.bat             # Data migration
+│   └── cleanup.bat             # Clean cache
+│
+├── macOS_Linux/                # macOS / Linux scripts
+│   ├── setup.sh
+│   ├── launch.sh
+│   ├── model-manager.sh
+│   ├── update.sh
+│   ├── migrate.sh
+│   └── cleanup.sh
+│
+├── bin/                        # uv.exe + uvx.exe + other binaries
 ├── python/                     # Windows portable Python (Embedded)
 ├── python-macos/               # macOS portable Python (Miniconda)
 ├── python-linux/               # Linux portable Python (Miniconda)
