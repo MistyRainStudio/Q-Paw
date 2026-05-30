@@ -54,8 +54,11 @@ chmod +x setup.sh && ./setup.sh     # 安装
 3. **安装 QwenPaw + modelscope**（uv 优先，pip 兜底；使用国内镜像源）
 4. **创建便携目录结构**（data / config / models / logs）
 5. **生成便携模式配置文件**（`config/portable.env`）
+6. **初始化 QwenPaw 工作区**（`qwenpaw init --defaults`）— 生成 `data/config.json`、`data/HEARTBEAT.md` 等核心文件
 
 > 安装过程需要联网。首次安装约需 2-10 分钟（uv 模式）或 5-15 分钟（pip 模式），取决于网速。
+>
+> **关于工作区初始化**：QwenPaw 首次运行前必须执行 `qwenpaw init`，它会生成配置文件和工作目录结构。Q-Paw 的 setup 脚本已自动处理此步骤，将工作区指向U盘的 `data/` 目录（通过 `QWENPAW_WORKING_DIR` 环境变量），敏感数据存储在 `data/.secret/`（通过 `QWENPAW_SECRET_DIR`）。如需重新初始化，可运行：`set QWENPAW_WORKING_DIR=U盘路径\data && python -m qwenpaw init --force`
 
 ---
 

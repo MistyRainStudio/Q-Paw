@@ -53,6 +53,7 @@ export PATH="$USB_ROOT/bin:$PYTHONHOME/bin:$PATH"
 
 # --- Core portable setting: QwenPaw working directory on USB ---
 export QWENPAW_WORKING_DIR="$USB_ROOT/data"
+export QWENPAW_SECRET_DIR="$USB_ROOT/data/.secret"
 
 # --- Portable mode flags ---
 export QP_PORTABLE_MODE=1
@@ -60,6 +61,15 @@ export QP_MODELS_DIR="$USB_ROOT/models"
 
 # --- Ensure directories exist ---
 mkdir -p "$QWENPAW_WORKING_DIR" "$QP_MODELS_DIR"
+
+# --- Check if QwenPaw workspace is initialized ---
+if [ ! -f "$QWENPAW_WORKING_DIR/config.json" ]; then
+    echo ""
+    echo -e "${YELLOW}[WARN] QwenPaw workspace not initialized!${NC}"
+    echo -e "       Please run ${GREEN}setup.sh${NC} first, or run: ${GREEN}qwenpaw init --defaults${NC}"
+    echo ""
+    exit 1
+fi
 
 # --- Display info ---
 echo ""
@@ -70,6 +80,7 @@ echo ""
 echo -e " USB Root:   ${GREEN}$USB_ROOT${NC}"
 echo -e " Python:     ${GREEN}$PYTHON_BIN${NC}"
 echo -e " Work Dir:   ${GREEN}$QWENPAW_WORKING_DIR${NC}"
+echo -e " Secret Dir: ${GREEN}$QWENPAW_SECRET_DIR${NC}"
 echo -e " Models Dir: ${GREEN}$QP_MODELS_DIR${NC}"
 
 # --- Show package manager ---

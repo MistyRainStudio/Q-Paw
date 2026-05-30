@@ -20,7 +20,7 @@ echo.
 :: =============================================
 :: Step 1: Install uv (super fast package manager)
 :: =============================================
-echo  [1/5] Installing uv package manager...
+echo  [1/6] Installing uv package manager...
 
 set "UV_BIN=%USB_ROOT%\bin\uv.exe"
 
@@ -73,7 +73,7 @@ echo.
 :: =============================================
 :: Step 2: Portable Python
 :: =============================================
-echo  [2/5] Checking portable Python...
+echo  [2/6] Checking portable Python...
 
 if exist "%USB_ROOT%\python\python.exe" goto :PY_DONE
 
@@ -158,7 +158,7 @@ exit /b 1
 :: =============================================
 :: Step 3: Install QwenPaw (uv first, pip fallback)
 :: =============================================
-echo  [3/5] Installing QwenPaw...
+echo  [3/6] Installing QwenPaw...
 
 "%USB_ROOT%\python\python.exe" -c "import qwenpaw" >nul 2>&1
 if %errorlevel%==0 goto :QP_DONE
@@ -225,7 +225,7 @@ echo.
 :: =============================================
 :: Step 4: Create directory structure
 :: =============================================
-echo  [4/5] Creating portable directories...
+echo  [4/6] Creating portable directories...
 mkdir "%USB_ROOT%\data" 2>nul
 mkdir "%USB_ROOT%\config" 2>nul
 mkdir "%USB_ROOT%\models" 2>nul
@@ -238,7 +238,7 @@ echo.
 :: =============================================
 :: Step 5: Generate config
 :: =============================================
-echo  [5/5] Generating portable config...
+echo  [5/6] Generating portable config...
 
 if exist "%USB_ROOT%\config\portable.env" goto :CFG_DONE
 
@@ -261,6 +261,38 @@ goto :CFG_END
 echo  OK - Config already exists, skipping.
 
 :CFG_END
+echo.
+
+:: =============================================
+:: Step 6: Initialize QwenPaw workspace
+:: =============================================
+echo  [6/6] Initializing QwenPaw workspace...
+
+set "QWENPAW_WORKING_DIR=%USB_ROOT%\data"
+set "QWENPAW_SECRET_DIR=%USB_ROOT%\data\.secret"
+set "PYTHONHOME=%USB_ROOT%\python"
+set "PYTHONPATH=%USB_ROOT%\python\Lib;%USB_ROOT%\python\Lib\site-packages"
+set "PATH=%USB_ROOT%\python;%USB_ROOT%\python\Scripts;%USB_ROOT%\bin;%PATH%"
+
+if exist "%QWENPAW_WORKING_DIR%\config.json" goto :INIT_DONE
+
+echo  Running qwenpaw init --defaults...
+echo  Working directory: %QWENPAW_WORKING_DIR%
+"%USB_ROOT%\python\python.exe" -m qwenpaw init --defaults
+if %errorlevel%==0 goto :INIT_OK
+
+echo  [WARN] qwenpaw init --defaults failed, trying interactive mode...
+"%USB_ROOT%\python\python.exe" -m qwenpaw init
+if %errorlevel%==0 goto :INIT_OK
+
+echo  [WARN] QwenPaw init failed. You can run it manually later:
+echo         set QWENPAW_WORKING_DIR=%USB_ROOT%\data
+echo         python -m qwenpaw init
+goto :INIT_DONE
+
+:INIT_OK
+echo  OK - QwenPaw workspace initialized.
+:INIT_DONE
 echo.
 
 :: =============================================

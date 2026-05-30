@@ -53,8 +53,11 @@ Setup will automatically:
 3. Install QwenPaw + modelscope (uv first, pip fallback, Chinese mirrors)
 4. Create portable directories (data / config / models / logs)
 5. Generate portable config file (`config/portable.env`)
+6. **Initialize QwenPaw workspace** (`qwenpaw init --defaults`) — generates `data/config.json`, `data/HEARTBEAT.md` and core workspace files
 
 > Requires internet. First-time setup takes about 5-15 minutes depending on network speed.
+>
+> **About workspace initialization**: QwenPaw requires `qwenpaw init` before first run to generate config files and workspace structure. The Q-Paw setup script handles this automatically, pointing the workspace to the USB `data/` directory (via `QWENPAW_WORKING_DIR` env var), with sensitive data in `data/.secret/` (via `QWENPAW_SECRET_DIR`). To re-initialize: `set QWENPAW_WORKING_DIR=USB_PATH\data && python -m qwenpaw init --force`
 
 ---
 

@@ -202,16 +202,24 @@ func showStatus(usbRoot string) {
                 }
         }
 
+        // Check workspace init (config.json in data/)
+        initStatus := colorRed + "未初始化" + colorReset
+        configJsonPath := filepath.Join(usbRoot, "data", "config.json")
+        if fileExists(configJsonPath) {
+                initStatus = colorGreen + "已初始化" + colorReset
+        }
+
         fmt.Println("  " + colorDim + "┌─ 系统状态 ────────────────────────────────┐" + colorReset)
         fmt.Printf("  "+colorDim+"│"+colorReset+"  Python:  %-20s uv: %-14s"+colorDim+"│"+colorReset+"\n", pyStatus, uvStatus)
         fmt.Printf("  "+colorDim+"│"+colorReset+"  QwenPaw: %-20s 模型: %-4d"+colorDim+"         │"+colorReset+"\n", qpStatus, modelCount)
+        fmt.Printf("  "+colorDim+"│"+colorReset+"  工作区:  %-30s"+colorDim+"│"+colorReset+"\n", initStatus)
         fmt.Printf("  "+colorDim+"│"+colorReset+"  运行模式: %-30s"+colorDim+"│"+colorReset+"\n", modeColor+mode+colorReset)
         fmt.Println("  " + colorDim + "└──────────────────────────────────────────┘" + colorReset)
 }
 
 func showMenu() {
         fmt.Println()
-        fmt.Println("  " + colorBold + "[1]" + colorReset + " 📥 安装环境      " + colorGray + "首次使用必选 (安装 uv + Python + QwenPaw)" + colorReset)
+        fmt.Println("  " + colorBold + "[1]" + colorReset + " 📥 安装环境      " + colorGray + "首次使用必选 (安装 + 初始化工作区)" + colorReset)
         fmt.Println("  " + colorBold + "[2]" + colorReset + " 🚀 启动 QwenPaw  " + colorGray + "在线/离线模式启动" + colorReset)
         fmt.Println("  " + colorBold + "[3]" + colorReset + " 📦 模型管理      " + colorGray + "下载/导入/删除本地模型" + colorReset)
         fmt.Println("  " + colorBold + "[4]" + colorReset + " 🔄 更新          " + colorGray + "更新 QwenPaw + modelscope + uv" + colorReset)
@@ -235,6 +243,17 @@ func runSetup(usbRoot string) {
 func runLaunch(usbRoot string) {
         fmt.Println("\n  ═══ 🚀 启动 QwenPaw ═══")
         fmt.Println()
+
+        // Check if workspace is initialized
+        configJsonPath := filepath.Join(usbRoot, "data", "config.json")
+        if !fileExists(configJsonPath) {
+                fmt.Println("  " + colorRed + "[!] 工作区未初始化！请先运行 [1] 安装环境" + colorReset)
+                fmt.Println("      或手动执行: set QWENPAW_WORKING_DIR=" + filepath.Join(usbRoot, "data") + " && python -m qwenpaw init --defaults")
+                fmt.Println()
+                readInput("  按回车继续...")
+                return
+        }
+
         script := filepath.Join(usbRoot, "Windows", "launch.bat")
         if !fileExists(script) {
                 script = filepath.Join(usbRoot, "launch.bat")

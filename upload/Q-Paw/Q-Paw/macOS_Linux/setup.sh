@@ -28,7 +28,7 @@ echo -e "${CYAN} =============================================${NC}"
 echo ""
 
 # --- Step 1: Install uv ---
-echo -e " [1/5] Installing uv package manager..."
+echo -e " [1/6] Installing uv package manager..."
 
 UV_BIN="$USB_ROOT/bin/uv"
 mkdir -p "$USB_ROOT/bin"
@@ -102,7 +102,7 @@ fi
 echo ""
 
 # --- Step 2: Install Miniconda ---
-echo -e " [2/5] Checking portable Python..."
+echo -e " [2/6] Checking portable Python..."
 
 PYTHON_DIR=""
 if [ "$OS_NAME" = "Darwin" ]; then
@@ -161,7 +161,7 @@ fi
 echo ""
 
 # --- Step 3: Install QwenPaw (uv first, pip fallback) ---
-echo -e " [3/5] Installing QwenPaw and dependencies..."
+echo -e " [3/6] Installing QwenPaw and dependencies..."
 if "$PYTHON_BIN" -c "import qwenpaw" 2>/dev/null; then
     echo -e " ${GREEN}OK - QwenPaw already installed, skipping.${NC}"
     QP_PKG_MGR="existing"
@@ -210,7 +210,7 @@ fi
 echo ""
 
 # --- Step 4: Create directory structure ---
-echo -e " [4/5] Creating portable directories..."
+echo -e " [4/6] Creating portable directories..."
 mkdir -p "$USB_ROOT/data"
 mkdir -p "$USB_ROOT/config"
 mkdir -p "$USB_ROOT/models"
@@ -221,7 +221,7 @@ echo -e " ${GREEN}OK - Directories created.${NC}"
 echo ""
 
 # --- Step 5: Generate config ---
-echo -e " [5/5] Generating portable config..."
+echo -e " [5/6] Generating portable config..."
 if [ ! -f "$USB_ROOT/config/portable.env" ]; then
     cat > "$USB_ROOT/config/portable.env" << EOF
 # Q-Paw Portable Config
@@ -245,6 +245,32 @@ echo ""
 
 # --- Set script executable permissions ---
 chmod +x "$USB_ROOT/macOS_Linux/"*.sh "$USB_ROOT/bin/"* 2>/dev/null || true
+
+# --- Step 6: Initialize QwenPaw workspace ---
+echo -e " [6/6] Initializing QwenPaw workspace..."
+
+export QWENPAW_WORKING_DIR="$USB_ROOT/data"
+export QWENPAW_SECRET_DIR="$USB_ROOT/data/.secret"
+
+if [ -f "$QWENPAW_WORKING_DIR/config.json" ]; then
+    echo -e " ${GREEN}OK - QwenPaw workspace already initialized, skipping.${NC}"
+else
+    echo " Running qwenpaw init --defaults..."
+    echo " Working directory: $QWENPAW_WORKING_DIR"
+    if "$PYTHON_BIN" -m qwenpaw init --defaults; then
+        echo -e " ${GREEN}OK - QwenPaw workspace initialized.${NC}"
+    else
+        echo -e " ${YELLOW}[WARN] qwenpaw init --defaults failed, trying interactive mode...${NC}"
+        if "$PYTHON_BIN" -m qwenpaw init; then
+            echo -e " ${GREEN}OK - QwenPaw workspace initialized.${NC}"
+        else
+            echo -e " ${YELLOW}[WARN] QwenPaw init failed. You can run it manually:${NC}"
+            echo -e "   export QWENPAW_WORKING_DIR=$USB_ROOT/data"
+            echo -e "   python3 -m qwenpaw init"
+        fi
+    fi
+fi
+echo ""
 
 # --- Done ---
 echo -e "${CYAN} =============================================${NC}"
