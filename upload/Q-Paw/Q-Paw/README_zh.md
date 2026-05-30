@@ -12,33 +12,17 @@
 
 | 特点 | 说明 |
 |------|------|
-| 🖥️ **可视化向导** | .NET WinForms 图形界面 — 安装、启动、管理模型全程可视化操作 |
-| 🔌 **即插即用** | 插入U盘，双击 `QPawWizard.exe` 即可开始使用 |
+| 🔌 **即插即用** | 插入U盘，运行 `setup.bat` 安装，再运行 `launch.bat` 启动 |
 | 🚀 **随拔即走** | 所有配置和数据保存在U盘，拔出不留痕迹 |
 | ⚡ **uv + pip** | 默认使用 uv（比 pip 快 10-100 倍），不可用时自动回退到 pip |
 | 📦 **模型不默认下载** | 默认在线模式，按需下载或导入本地模型 |
 | 🌐 **免翻墙** | 依赖从阿里云/清华/华为镜像源下载，无需科学上网 |
-| 💻 **跨平台** | Windows（可视化+脚本）/ macOS / Linux（脚本） |
+| 💻 **跨平台** | Windows（脚本）/ macOS / Linux（脚本） |
 | 🛡️ **安全防护** | 继承 QwenPaw 三层安全体系（工具守卫/文件防护/技能扫描） |
 
 ---
 
 ## 快速开始
-
-### 方式 A：可视化向导（推荐，Windows）
-
-1. 将整个 `Q-Paw` 目录拷贝到U盘
-2. 双击 **`QPawWizard.exe`** — 自包含 .NET 8 应用，无需安装 .NET 运行时
-3. 按向导操作：
-   - **📥 安装向导** — 一键安装 uv + Python + QwenPaw + modelscope
-   - **🔌 API 配置** — 配置 DashScope / OpenAI / OpenRouter / ModelScope 的 API Key
-   - **🚀 启动助手** — 在线/离线模式启动 QwenPaw
-   - **📦 模型管理** — 下载 / 导入 / 删除模型
-   - **⚙️ 设置** — 包管理器、镜像源、模式切换、缓存清理
-   - **🔄 数据迁移** — 从旧版 Q-Paw 合并数据
-   - **💻 控制台** — 实时查看命令执行输出
-
-### 方式 B：命令行（Windows / macOS / Linux）
 
 **Windows：**
 ```
@@ -72,9 +56,6 @@ chmod +x setup.sh && ./setup.sh     # 安装
 
 ```
 Q-Paw/                          ← U盘根目录
-├── QPawWizard.exe              # 🖥️ 可视化向导（自包含 .NET 8，69MB）
-├── index.html                  # 网页控制台（浏览器打开）
-│
 ├── launch.bat / .sh            # 启动脚本
 ├── setup.bat / .sh             # 初始化安装脚本
 ├── model-manager.bat / .sh     # 模型管理器
@@ -90,8 +71,7 @@ Q-Paw/                          ← U盘根目录
 ├── models/                     # 本地模型目录（按需下载，默认为空）
 ├── config/                     # 配置文件
 │   ├── portable.env            # 便携模式环境变量（自动生成）
-│   ├── api-keys.env            # API 密钥（向导生成）
-│   ├── qwenpaw-config.yaml    # QwenPaw 配置（向导生成）
+│   ├── qwenpaw-config.yaml    # QwenPaw 配置
 │   └── *.example               # 配置示例
 ├── data/                       # 用户数据（QWENPAW_WORKING_DIR）
 ├── logs/                       # 日志文件
@@ -99,34 +79,6 @@ Q-Paw/                          ← U盘根目录
 ├── README.md                   # 英文文档
 └── README_zh.md                # 中文文档（本文件）
 ```
-
----
-
-## QPawWizard.exe — 可视化向导
-
-`QPawWizard.exe` 是一个自包含的 .NET 8 WinForms 应用程序，提供所有 Q-Paw 操作的图形界面。**无需在目标电脑上安装 .NET 运行时**。
-
-### 功能页面
-
-| 页面 | 功能 |
-|------|------|
-| 🏠 **仪表盘** | 系统状态概览 — Python、QwenPaw、模型数量、包管理器、磁盘空间 |
-| 📥 **安装向导** | 一键安装：uv → Python → QwenPaw → modelscope → 配置 |
-| 🚀 **启动助手** | 在线/离线模式启动 QwenPaw，自动设置环境变量 |
-| 📦 **模型管理** | 从 ModelScope 下载模型、导入本地模型、删除模型 |
-| 🔄 **更新 QwenPaw** | 一键更新 uv + QwenPaw + modelscope（也可用 `update.bat` / `update.sh`） |
-| 🔌 **API 配置** | DashScope / OpenAI / OpenRouter / ModelScope API Key 管理，一键测试连通性 |
-| ⚙️ **设置** | 包管理器选择、下载镜像源、模型模式、缓存清理 |
-| 🔄 **数据迁移** | 从旧版 Q-Paw 目录合并模型 + 数据 + 配置 |
-| 💻 **控制台** | 实时命令执行输出，查看安装/下载/测试日志 |
-
-### 技术细节
-
-- **框架**：.NET 8 WinForms（C#）
-- **发布**：自包含单文件，`win-x64`，压缩
-- **大小**：约 69MB（包含 .NET 运行时，无需单独安装）
-- **源码**：`Q-Paw-App/QPawWizard/` 目录
-- **重新构建**：运行 `build.bat`（Windows）或 `build.sh`（Linux/macOS 交叉编译）
 
 ---
 
@@ -138,7 +90,6 @@ Q-Paw/                          ← U盘根目录
 | **离线模式** | ❌ | ✅ | 使用本地模型推理，完全离线运行，数据不出U盘 |
 
 切换方式：
-- 通过 QPawWizard.exe → ⚙️ 设置 切换
 - 通过 `model-manager` 脚本一键切换
 - 或手动编辑 `config/portable.env` 中的 `QP_MODEL_MODE=online` / `local`
 
@@ -199,23 +150,19 @@ Q-Paw 继承 QwenPaw 的三层安全防护体系：
 
 ## 常见问题
 
-### Q：QPawWizard.exe 有 69MB，需要安装 .NET 吗？
-不需要！它是自包含单文件可执行程序，内置了 .NET 运行时。双击即可运行，无需额外安装。
-
 ### Q：插上U盘就能直接用吗？
-需要先运行一次安装（通过 QPawWizard.exe 或 setup.bat）完成初始化。之后每次插入U盘双击启动即可。
+需要先运行一次 `setup.bat`（Windows）或 `./setup.sh`（macOS/Linux）完成初始化。之后每次插入U盘双击 `launch.bat` 启动即可。
 
 ### Q：不用本地模型可以吗？
 完全可以！默认就是在线模式，通过云端 API 使用 AI，不需要下载任何模型。
 
 ### Q：如何升级 Q-Paw 且不丢失数据？
-使用 QPawWizard.exe → 🔄 数据迁移，或运行 `migrate.bat` / `migrate.sh`。
+运行 `migrate.bat`（Windows）或 `migrate.sh`（macOS/Linux），从旧版 Q-Paw 目录合并数据。
 
 ### Q：如何更新 QwenPaw 到最新版本？
-三种方式更新：
-1. **QPawWizard.exe** → 点击仪表盘或启动页的「🔄 更新 QwenPaw」按钮
-2. **脚本**：双击 `update.bat`（Windows）或运行 `./update.sh`（macOS/Linux）
-3. **手动**：运行 `uv pip install --upgrade qwenpaw` 或 `python -m pip install --upgrade qwenpaw`
+两种方式更新：
+1. **脚本**：双击 `update.bat`（Windows）或运行 `./update.sh`（macOS/Linux）
+2. **手动**：运行 `uv pip install --upgrade qwenpaw` 或 `python -m pip install --upgrade qwenpaw`
 
 更新脚本会同时更新 `modelscope` SDK 和 `uv` 包管理器。
 
@@ -229,7 +176,6 @@ Q-Paw 继承 QwenPaw 的三层安全防护体系：
 | 对比项 | U-Claw（虾盘） | Q-Paw |
 |--------|----------------|-------|
 | 底层框架 | OpenClaw（Node.js） | QwenPaw / AgentScope（Python） |
-| 可视化向导 | 无 | .NET WinForms 图形向导 |
 | 包管理 | npm | uv（快10-100倍）+ pip（兼容） |
 | 便携运行时 | Node.js Embedded | Python Embedded / Miniconda |
 | 模型策略 | 默认包含 | 不默认下载，用户按需操作 |
