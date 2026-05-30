@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q-Paw - QwenPaw 便携助手控制台</title>
+<style>
+/* ============================================
+   Q-Paw Color System — QwenPaw.agentscope.io
+   Brand Orange: #F46F02 / #FF9D4D / #E77C29
+   Deep Base: #26244C / #141413
+   Warm Neutral: #F0E6DF / #F5F3EF / #FFF7F0
+   Blue accent: #0064FD
+   Purple accent: #6F42C1
+   ============================================ */
+:root {
+  --bg: #FEFBF9;
+  --sidebar: #26244C;
+  --sidebar-hover: #332f5e;
+  --card: #ffffff;
+  --card-hover: #FFF7F0;
+  --text: #26244C;
+  --text-secondary: #4a4a4a;
+  --dim: #8c8585;
+  --orange: #F46F02;
+  --orange-light: #FF9D4D;
+  --orange-dark: #E77C29;
+  --orange-bg: #FFF7F0;
+  --orange-border: #FFD8B8;
+  --blue: #0064FD;
+  --blue-light: #4d8fff;
+  --purple: #6F42C1;
+  --purple-light: #9b6dd7;
+  --green: #16a34a;
+  --green-light: #4ade80;
+  --green-bg: #f0fdf4;
+  --red: #dc2626;
+  --red-light: #f87171;
+  --red-bg: #fef2f2;
+  --yellow: #ca8a04;
+  --yellow-bg: #fefce8;
+  --border: #e6e6e6;
+  --border-light: #ececec;
+  --sidebar-w: 240px;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(38,36,76,.08), 0 1px 2px rgba(38,36,76,.06);
+  --shadow-md: 0 4px 12px rgba(38,36,76,.1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ============ Sidebar ============ */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: var(--sidebar-w); height: 100vh;
+  background: var(--sidebar);
+  overflow-y: auto; padding: 0 0 20px;
+  z-index: 100; transition: transform .3s;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 2px; }
+
+.sidebar-logo {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 10px;
+}
+.sidebar-logo .logo-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-light));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2em;
+  box-shadow: 0 2px 8px rgba(244,111,2,.3);
+}
+.sidebar-logo h2 { color: #fff; font-size: 1.1em; font-weight: 700; }
+.sidebar-logo p { color: rgba(255,255,255,.5); font-size: 0.72em; margin-top: 2px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 16px 9px 20px;
+  color: rgba(255,255,255,.55); font-size: 0.88em;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all .15s; cursor: pointer;
+}
+.nav-item:hover { color: #fff; background: var(--sidebar-hover); }
+.nav-item.active {
+  color: #fff;
+  border-left-color: var(--orange);
+  background: linear-gradient(90deg, rgba(244,111,2,.2), transparent);
+}
+.nav-item .nav-icon { width: 20px; text-align: center; font-size: 0.95em; }
+
+.nav-divider {
+  height: 1px; background: rgba(255,255,255,.08);
+  margin: 6px 16px;
+}
+.nav-label {
+  padding: 8px 20px 4px;
+  color: rgba(255,255,255,.35); font-size: 0.7em;
+  font-weight: 600; text-transform: uppercase; letter-spacing: .5px;
+}
+
+.sidebar-footer {
+  padding: 12px 16px; margin-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  font-size: 0.7em; color: rgba(255,255,255,.3);
+}
+.sidebar-footer a { color: var(--orange-light); text-decoration: none; }
+
+/* ============ Main Content ============ */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 28px 36px 80px;
+  max-width: calc(var(--sidebar-w) + 900px);
+  min-height: 100vh;
+}
+
+.page { display: none; }
+.page.active { display: block; animation: fadeIn .25s ease-out; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1 { font-size: 1.8em; margin-bottom: 4px; color: var(--text); font-weight: 700; }
+h1 .accent { color: var(--orange); }
+h2 {
+  color: var(--text); font-size: 1.2em;
+  margin: 28px 0 12px; padding-bottom: 6px;
+  border-bottom: 2px solid var(--orange-border);
+  font-weight: 600;
+}
+h3 { color: var(--orange-dark); font-size: 1.05em; margin: 16px 0 8px; font-weight: 600; }
+
+p, li { margin-bottom: 6px; color: var(--text-secondary); }
+a { color: var(--orange); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+code {
+  background: #FDE8D7; color: var(--orange-dark);
+  padding: 2px 6px; border-radius: 4px; font-size: 0.88em;
+}
+pre {
+  background: #26244C; border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; overflow-x: auto; margin: 10px 0;
+  color: #e2e8f0; position: relative;
+}
+pre code { background: none; color: #FF9D4D; padding: 0; }
+pre .copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(255,255,255,.15); border: none;
+  color: rgba(255,255,255,.7); border-radius: 4px;
+  padding: 4px 8px; font-size: 0.75em; cursor: pointer;
+  transition: all .2s;
+}
+pre .copy-btn:hover { background: rgba(255,255,255,.25); color: #fff; }
+
+/* ============ Cards ============ */
+.card {
+  background: var(--card); border: 1px solid var(--border-light);
+  border-radius: var(--radius); padding: 18px; margin: 12px 0;
+  box-shadow: var(--shadow); transition: all .2s;
+}
+.card:hover { box-shadow: var(--shadow-md); border-color: var(--orange-border); }
+.card-title {
+  font-size: 1em; font-weight: 600; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px; color: var(--text);
+}
+
+/* ============ Status Grid ============ */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px; margin: 12px 0;
+}
+.status-card {
+  background: var(--card); border: 1px solid var(--border-light);
+  border-radius: var(--radius); padding: 14px;
+  text-align: center; transition: all .2s;
+  box-shadow: var(--shadow);
+}
+.status-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.status-card .status-value {
+  font-size: 1.3em; font-weight: 700; margin: 2px 0; color: var(--orange);
+}
+.status-card .status-label { font-size: 0.78em; color: var(--dim); }
+.status-card .status-icon { font-size: 1.3em; margin-bottom: 2px; }
+.status-online .status-value { color: var(--green); }
+.status-offline .status-value { color: var(--yellow); }
+
+/* ============ Buttons ============ */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border: none; border-radius: 8px;
+  font-size: 0.9em; font-weight: 500; cursor: pointer;
+  transition: all .2s; text-decoration: none;
+}
+.btn-primary { background: linear-gradient(135deg, var(--orange), var(--orange-dark)); color: #fff; }
+.btn-primary:hover { box-shadow: 0 4px 12px rgba(244,111,2,.3); transform: translateY(-1px); }
+.btn-success { background: var(--green); color: #fff; }
+.btn-success:hover { background: #15803d; }
+.btn-warning { background: var(--yellow); color: #fff; }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-danger:hover { background: #b91c1c; }
+.btn-outline {
+  background: transparent; color: var(--orange);
+  border: 1px solid var(--orange);
+}
+.btn-outline:hover { background: var(--orange-bg); }
+.btn-sm { padding: 5px 12px; font-size: 0.82em; }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+
+/* ============ Provider Cards ============ */
+.provider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px; margin: 12px 0;
+}
+.provider-card {
+  background: var(--card); border: 1px solid var(--border-light);
+  border-radius: var(--radius); padding: 16px;
+  transition: all .2s; cursor: pointer; position: relative;
+  box-shadow: var(--shadow);
+}
+.provider-card:hover { border-color: var(--orange-border); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.provider-card.selected { border-color: var(--orange); box-shadow: 0 0 0 1px var(--orange), var(--shadow-md); }
+.provider-card .provider-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+.provider-card .provider-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1em; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.provider-card .provider-name { font-weight: 600; font-size: 1em; color: var(--text); }
+.provider-card .provider-desc { font-size: 0.82em; color: var(--dim); margin-bottom: 8px; }
+.provider-tag {
+  display: inline-block; padding: 2px 7px; border-radius: 4px;
+  font-size: 0.72em; font-weight: 600; margin-right: 3px;
+}
+
+.provider-icon-dashscope { background: linear-gradient(135deg, #ff6a00, #ee0979); }
+.provider-icon-openai { background: linear-gradient(135deg, #10a37f, #1a7f5a); }
+.provider-icon-openrouter { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+.provider-icon-modelscope { background: linear-gradient(135deg, #6236ff, #9b6dd7); }
+.provider-icon-ollama { background: linear-gradient(135deg, #6b7280, #9ca3af); }
+
+.tag-online { background: #e7f5ea; color: var(--green); }
+.tag-offline { background: #fef3cd; color: var(--yellow); }
+.tag-free { background: #e8f0fe; color: var(--blue); }
+.tag-domestic { background: var(--orange-bg); color: var(--orange-dark); }
+.tag-api { background: #f3e8ff; color: var(--purple); }
+
+/* ============ Forms ============ */
+.form-group { margin: 12px 0; }
+.form-label {
+  display: block; font-size: 0.86em; font-weight: 600;
+  margin-bottom: 4px; color: var(--text-secondary);
+}
+.form-input {
+  width: 100%; padding: 9px 12px;
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: 8px; color: var(--text);
+  font-size: 0.9em; transition: border-color .2s;
+  outline: none;
+}
+.form-input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(244,111,2,.1); }
+.form-input::placeholder { color: var(--dim); opacity: .6; }
+.form-select {
+  width: 100%; padding: 9px 12px;
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: 8px; color: var(--text);
+  font-size: 0.9em; cursor: pointer;
+  outline: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238c8585' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+}
+.form-select:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(244,111,2,.1); }
+.form-hint { font-size: 0.76em; color: var(--dim); margin-top: 3px; }
+
+/* ============ Tip / Warn / Danger ============ */
+.tip {
+  border-left: 4px solid var(--orange);
+  padding: 10px 14px; margin: 12px 0;
+  background: var(--orange-bg); border-radius: 0 8px 8px 0;
+  color: var(--text-secondary); font-size: 0.9em;
+}
+.warn {
+  border-left: 4px solid var(--yellow);
+  padding: 10px 14px; margin: 12px 0;
+  background: var(--yellow-bg); border-radius: 0 8px 8px 0;
+  color: var(--text-secondary); font-size: 0.9em;
+}
+.danger {
+  border-left: 4px solid var(--red);
+  padding: 10px 14px; margin: 12px 0;
+  background: var(--red-bg); border-radius: 0 8px 8px 0;
+  color: var(--text-secondary); font-size: 0.9em;
+}
+
+/* ============ Table ============ */
+table { width: 100%; border-collapse: collapse; margin: 12px 0; background: var(--card); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border-light); }
+th { background: var(--orange-bg); color: var(--orange-dark); font-weight: 600; font-size: 0.86em; }
+td { color: var(--text-secondary); }
+
+/* ============ Badge ============ */
+.badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 0.76em; font-weight: 600; }
+.badge-green { background: #dcfce7; color: var(--green); }
+.badge-yellow { background: #fef9c3; color: var(--yellow); }
+.badge-red { background: #fee2e2; color: var(--red); }
+.badge-blue { background: #dbeafe; color: var(--blue); }
+.badge-orange { background: var(--orange-bg); color: var(--orange-dark); }
+.badge-purple { background: #f3e8ff; color: var(--purple); }
+
+/* ============ Toast ============ */
+.toast-container { position: fixed; top: 16px; right: 16px; z-index: 1000; display: flex; flex-direction: column; gap: 6px; }
+.toast {
+  padding: 10px 16px; border-radius: 8px;
+  font-size: 0.86em; font-weight: 500;
+  animation: slideIn .3s ease-out;
+  box-shadow: var(--shadow-md);
+}
+.toast-success { background: #dcfce7; color: var(--green); border: 1px solid #bbf7d0; }
+.toast-error { background: #fee2e2; color: var(--red); border: 1px solid #fecaca; }
+.toast-info { background: var(--orange-bg); color: var(--orange-dark); border: 1px solid var(--orange-border); }
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ============ Test Result ============ */
+.test-result {
+  margin-top: 8px; padding: 10px 14px; border-radius: 8px;
+  font-size: 0.88em; display: none;
+}
+.test-result.show { display: block; }
+.test-result.success { background: var(--green-bg); border: 1px solid #bbf7d0; color: var(--green); }
+.test-result.fail { background: var(--red-bg); border: 1px solid #fecaca; color: var(--red); }
+.test-result.loading { background: var(--yellow-bg); border: 1px solid #fde68a; color: var(--yellow); }
+
+/* ============ Custom Model List ============ */
+.custom-model-item {
+  background: var(--card); border: 1px solid var(--border-light);
+  border-radius: 8px; padding: 14px; margin-bottom: 10px;
+  box-shadow: var(--shadow);
+}
+.custom-model-item .model-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px;
+}
+.custom-model-item .model-name { font-weight: 600; color: var(--text); }
+.custom-model-item .model-detail { font-size: 0.82em; color: var(--dim); margin-bottom: 2px; }
+
+/* ============ Tabs ============ */
+.tabs { display: flex; gap: 0; margin: 12px 0; border-bottom: 2px solid var(--border-light); }
+.tab {
+  padding: 8px 16px; font-size: 0.88em; font-weight: 500;
+  color: var(--dim); cursor: pointer; border-bottom: 2px solid transparent;
+  margin-bottom: -2px; transition: all .2s;
+}
+.tab:hover { color: var(--text-secondary); }
+.tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ============ Hero Section ============ */
+.hero { text-align: center; padding: 30px 0 16px; }
+.hero-title { font-size: 2.2em; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.hero-title .accent { color: var(--orange); }
+.hero-subtitle { font-size: 1em; color: var(--dim); margin-bottom: 20px; }
+
+/* ============ Mobile ============ */
+.menu-toggle {
+  display: none; position: fixed; top: 10px; left: 10px; z-index: 200;
+  background: var(--sidebar); border: none;
+  border-radius: 8px; padding: 7px 10px; color: #fff;
+  cursor: pointer; font-size: 1em;
+}
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; padding: 52px 14px 80px; }
+  .menu-toggle { display: block; }
+  .status-grid { grid-template-columns: repeat(2, 1fr); }
+  .provider-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile menu toggle -->
+<button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ============ Sidebar ============ -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🐾</div>
+    <div>
+      <h2>Q-Paw</h2>
+      <p>QwenPaw 便携控制台</p>
+    </div>
+  </div>
+
+  <div class="nav-label">快速开始</div>
+  <div class="nav-item active" data-page="home" onclick="showPage('home')">
+    <span class="nav-icon">🏠</span> 仪表盘
+  </div>
+  <div class="nav-item" data-page="launch" onclick="showPage('launch')">
+    <span class="nav-icon">🚀</span> 启动助手
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="nav-label">模型与 API</div>
+  <div class="nav-item" data-page="providers" onclick="showPage('providers')">
+    <span class="nav-icon">🔌</span> API 配置
+  </div>
+  <div class="nav-item" data-page="modelscope" onclick="showPage('modelscope')">
+    <span class="nav-icon">🤗</span> ModelScope
+  </div>
+  <div class="nav-item" data-page="custom-models" onclick="showPage('custom-models')">
+    <span class="nav-icon">✏️</span> 自定义模型
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="nav-label">配置</div>
+  <div class="nav-item" data-page="config" onclick="showPage('config')">
+    <span class="nav-icon">⚙️</span> 基本配置
+  </div>
+  <div class="nav-item" data-page="channels" onclick="showPage('channels')">
+    <span class="nav-icon">💬</span> 聊天渠道
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="nav-label">工具</div>
+  <div class="nav-item" data-page="migrate" onclick="showPage('migrate')">
+    <span class="nav-icon">🔄</span> 数据迁移
+  </div>
+  <div class="nav-item" data-page="help" onclick="showPage('help')">
+    <span class="nav-icon">📖</span> 使用指南
+  </div>
+
+  <div class="sidebar-footer">
+    Q-Paw v2.0 · Powered by <a href="https://qwenpaw.agentscope.io" target="_blank">QwenPaw</a>
+  </div>
+</nav>
+
+<!-- ============ Main Content ============ -->
+<main class="main">
+
+  <!-- ============ Home / Dashboard ============ -->
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-title">Q-<span class="accent">Paw</span> 🐾</div>
+      <div class="hero-subtitle">QwenPaw 便携助手 — 即插即用，随拔即走</div>
+    </div>
+
+    <h2>系统状态</h2>
+    <div class="status-grid">
+      <div class="status-card">
+        <div class="status-icon">🐍</div>
+        <div class="status-value" id="pyStatus">--</div>
+        <div class="status-label">Python 环境</div>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">🤖</div>
+        <div class="status-value" id="qpStatus">--</div>
+        <div class="status-label">QwenPaw</div>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">📦</div>
+        <div class="status-value" id="modelCount">0</div>
+        <div class="status-label">本地模型</div>
+      </div>
+      <div class="status-card status-online">
+        <div class="status-icon">🔌</div>
+        <div class="status-value" id="modeStatus">在线</div>
+        <div class="status-label">运行模式</div>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">🔑</div>
+        <div class="status-value" id="apiConfigured">0</div>
+        <div class="status-label">已配置 API</div>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">💬</div>
+        <div class="status-value" id="channelCount">0</div>
+        <div class="status-label">聊天渠道</div>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">⚡</div>
+        <div class="status-value" id="pkgMgrStatus">uv</div>
+        <div class="status-label">包管理器</div>
+      </div>
+    </div>
+
+    <h2>快速操作</h2>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="showPage('launch')">🚀 启动 QwenPaw</button>
+      <button class="btn btn-outline" onclick="showPage('providers')">🔌 配置 API</button>
+      <button class="btn btn-outline" onclick="showPage('custom-models')">✏️ 添加自定义模型</button>
+      <button class="btn btn-outline" onclick="exportAllConfig()">📦 导出全部配置</button>
+    </div>
+
+    <h2>镜像加速 & 包管理</h2>
+    <div class="card">
+      <p><strong>默认使用 uv</strong>（比 pip 快 10-100 倍），uv 不可用时自动回退到 pip。</p>
+      <table>
+        <thead><tr><th>组件</th><th>包管理</th><th>镜像源</th></tr></thead>
+        <tbody>
+          <tr><td>uv 二进制</td><td>—</td><td>NPMMirror / GitHub</td></tr>
+          <tr><td>Python 嵌入包</td><td>—</td><td>NPMMirror / 华为云 / python.org</td></tr>
+          <tr><td>Miniconda</td><td>—</td><td>清华 TUNA / 官方</td></tr>
+          <tr><td>QwenPaw 等包</td><td><span class="badge badge-green">uv 优先</span> pip 兜底</td><td>阿里云 / 清华 / 华为云 / 官方</td></tr>
+          <tr><td>ModelScope 模型</td><td>—</td><td>魔搭（国内直连）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============ Launch Page ============ -->
+  <div class="page" id="page-launch">
+    <h1>🚀 启动 <span class="accent">QwenPaw</span></h1>
+    <p>根据你的配置，生成正确的启动命令。</p>
+
+    <h2>启动模式</h2>
+    <div class="provider-grid">
+      <div class="provider-card selected" onclick="selectLaunchMode(this, 'online')">
+        <div class="provider-header">
+          <div class="provider-icon provider-icon-dashscope">☁️</div>
+          <div>
+            <div class="provider-name">在线模式</div>
+            <div class="provider-desc">调用云端 API，响应快，效果好</div>
+          </div>
+        </div>
+        <span class="provider-tag tag-online">需要网络</span>
+        <span class="provider-tag tag-api">API 调用</span>
+      </div>
+      <div class="provider-card" onclick="selectLaunchMode(this, 'offline')">
+        <div class="provider-header">
+          <div class="provider-icon provider-icon-modelscope">🖥️</div>
+          <div>
+            <div class="provider-name">离线模式</div>
+            <div class="provider-desc">本地模型推理，数据不出U盘</div>
+          </div>
+        </div>
+        <span class="provider-tag tag-offline">需要本地模型</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 启动命令（根据你的配置自动生成）</div>
+      <pre><code id="launchCmd"></code><button class="copy-btn" onclick="copyText('launchCmd')">📋 复制</button></pre>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="copyText('launchCmd')">📋 复制命令到剪贴板</button>
+        <button class="btn btn-outline" onclick="showPage('providers')">🔌 前往配置 API</button>
+      </div>
+    </div>
+
+    <div class="tip">
+      <strong>提示：</strong>首次启动前，请先运行 <code>setup</code> 脚本完成环境初始化。在线模式需先在「API 配置」页填写 API Key。
+    </div>
+  </div>
+
+  <!-- ============ API Providers ============ -->
+  <div class="page" id="page-providers">
+    <h1>🔌 API 配置</h1>
+    <p>配置你的 AI 模型提供商，填写 API Key 后可测试连通性。</p>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this, 'tab-dashscope')">DashScope</div>
+      <div class="tab" onclick="switchTab(this, 'tab-openai')">OpenAI</div>
+      <div class="tab" onclick="switchTab(this, 'tab-openrouter')">OpenRouter</div>
+      <div class="tab" onclick="switchTab(this, 'tab-modelscope')">ModelScope</div>
+    </div>
+
+    <!-- DashScope -->
+    <div class="tab-panel active" id="tab-dashscope">
+      <div class="card">
+        <div class="card-title"><span>🔵</span> 阿里云百炼 DashScope</div>
+        <p style="margin-bottom:10px;">通义千问官方 API，国内直连，新用户有免费额度。</p>
+        <div class="form-group">
+          <label class="form-label">API Key</label>
+          <input class="form-input" type="password" id="dsApiKey" placeholder="sk-xxxxxxxxxxxxxxxx" oninput="saveConfig()" />
+          <div class="form-hint">访问 <a href="https://dashscope.console.aliyun.com/apiKey" target="_blank">阿里云百炼控制台</a> 获取 API Key</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">默认模型</label>
+          <select class="form-select" id="dsModel" onchange="saveConfig()">
+            <option value="qwen-max">qwen-max（效果最好）</option>
+            <option value="qwen-plus" selected>qwen-plus（推荐）</option>
+            <option value="qwen-turbo">qwen-turbo（最快）</option>
+            <option value="qwen-long">qwen-long（长文本）</option>
+          </select>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="testDashScope()">🧪 测试连通性</button>
+          <button class="btn btn-outline" onclick="saveConfig()">💾 保存</button>
+        </div>
+        <div class="test-result" id="dsTestResult"></div>
+      </div>
+    </div>
+
+    <!-- OpenAI -->
+    <div class="tab-panel" id="tab-openai">
+      <div class="card">
+        <div class="card-title"><span>🟢</span> OpenAI</div>
+        <p style="margin-bottom:10px;">GPT-4o、GPT-4、GPT-3.5 等，全球领先的 LLM。</p>
+        <div class="form-group">
+          <label class="form-label">API Key</label>
+          <input class="form-input" type="password" id="oaiApiKey" placeholder="sk-xxxxxxxxxxxxxxxx" oninput="saveConfig()" />
+          <div class="form-hint">访问 <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI API Keys</a> 获取。国内可能需要代理。</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">API Base URL（可选，用于代理）</label>
+          <input class="form-input" id="oaiBaseUrl" placeholder="https://api.openai.com/v1" oninput="saveConfig()" />
+          <div class="form-hint">如需代理，填写你的代理地址，例如 https://your-proxy.com/v1</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">默认模型</label>
+          <select class="form-select" id="oaiModel" onchange="saveConfig()">
+            <option value="gpt-4o">gpt-4o（推荐）</option>
+            <option value="gpt-4o-mini">gpt-4o-mini（快速便宜）</option>
+            <option value="gpt-4-turbo">gpt-4-turbo</option>
+            <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+          </select>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="testOpenAI()">🧪 测试连通性</button>
+          <button class="btn btn-outline" onclick="saveConfig()">💾 保存</button>
+        </div>
+        <div class="test-result" id="oaiTestResult"></div>
+      </div>
+    </div>
+
+    <!-- OpenRouter -->
+    <div class="tab-panel" id="tab-openrouter">
+      <div class="card">
+        <div class="card-title"><span>🟣</span> OpenRouter</div>
+        <p style="margin-bottom:10px;">聚合 100+ 模型，统一 API 接口调用，部分模型免费。</p>
+        <div class="form-group">
+          <label class="form-label">API Key</label>
+          <input class="form-input" type="password" id="orApiKey" placeholder="sk-or-xxxxxxxxxxxxxxxx" oninput="saveConfig()" />
+          <div class="form-hint">访问 <a href="https://openrouter.ai/keys" target="_blank">OpenRouter Keys</a> 获取</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">默认模型</label>
+          <select class="form-select" id="orModel" onchange="saveConfig()">
+            <option value="qwen/qwen-2.5-72b-instruct">Qwen2.5-72B（推荐）</option>
+            <option value="deepseek/deepseek-chat">DeepSeek V3</option>
+            <option value="meta-llama/llama-3.1-70b-instruct">Llama 3.1 70B</option>
+            <option value="google/gemini-pro-1.5">Gemini Pro 1.5</option>
+          </select>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="testOpenRouter()">🧪 测试连通性</button>
+          <button class="btn btn-outline" onclick="saveConfig()">💾 保存</button>
+        </div>
+        <div class="test-result" id="orTestResult"></div>
+      </div>
+    </div>
+
+    <!-- ModelScope API -->
+    <div class="tab-panel" id="tab-modelscope">
+      <div class="card">
+        <div class="card-title"><span>🟣</span> ModelScope 魔搭</div>
+        <p style="margin-bottom:10px;">魔搭社区 — 国内最大模型托管平台，同时提供<strong>云端 API 推理</strong>和<strong>本地模型下载</strong>两种方式，国内直连。</p>
+        <div style="margin-bottom:10px;">
+          <span class="provider-tag tag-api">云端 API</span>
+          <span class="provider-tag tag-offline">本地推理</span>
+          <span class="provider-tag tag-free">每日2000次免费</span>
+          <span class="provider-tag tag-domestic">国内直连</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">SDK Token</label>
+          <input class="form-input" type="password" id="msApiKey" placeholder="your-modelscope-token" oninput="saveConfig()" />
+          <div class="form-hint">访问 <a href="https://modelscope.cn/my/myaccesstoken" target="_blank">ModelScope Access Token</a> 获取</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">默认模型</label>
+          <select class="form-select" id="msModel" onchange="saveConfig()">
+            <option value="Qwen/Qwen2.5-72B-Instruct">Qwen2.5-72B（效果最好）</option>
+            <option value="Qwen/Qwen2.5-7B-Instruct" selected>Qwen2.5-7B（推荐）</option>
+            <option value="Qwen/Qwen2.5-3B-Instruct">Qwen2.5-3B（快速）</option>
+            <option value="Qwen/Qwen2.5-Coder-7B-Instruct">Qwen2.5-Coder-7B（代码）</option>
+          </select>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="testModelScope()">🧪 测试连通性</button>
+          <button class="btn btn-outline" onclick="saveConfig()">💾 保存</button>
+        </div>
+        <div class="test-result" id="msTestResult"></div>
+      </div>
+    </div>
+
+    <h2>已保存的 API 配置</h2>
+    <div class="card" id="savedApiSummary">
+      <p style="color:var(--dim)">尚未配置任何 API，请在上方填写。</p>
+    </div>
+
+    <h2>导出配置为启动脚本</h2>
+    <div class="card">
+      <div class="card-title">📦 一键生成环境变量脚本</div>
+      <p style="margin-bottom:8px;">将你的 API 配置导出为脚本，启动 QwenPaw 前运行即可生效。</p>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="exportEnvScript('bat')">📥 导出 set-env.bat（Windows）</button>
+        <button class="btn btn-primary" onclick="exportEnvScript('sh')">📥 导出 set-env.sh（macOS/Linux）</button>
+        <button class="btn btn-outline" onclick="exportConfigYaml()">📥 导出 config.yaml</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ModelScope Page ============ -->
+  <div class="page" id="page-modelscope">
+    <h1>🤗 ModelScope</h1>
+    <p>魔搭社区 — 国内最大模型托管平台，提供 API 推理和模型下载两种方式。</p>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this, 'tab-ms-api')">☁️ API 推理</div>
+      <div class="tab" onclick="switchTab(this, 'tab-ms-local')">📦 本地下载</div>
+    </div>
+
+    <!-- API Mode -->
+    <div class="tab-panel active" id="tab-ms-api">
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">SDK Token</label>
+          <input class="form-input" type="password" id="msApiToken" placeholder="输入你的 ModelScope SDK Token" oninput="saveConfig()" />
+          <div class="form-hint">访问 <a href="https://modelscope.cn/my/myaccesstoken" target="_blank">ModelScope Access Token</a> 获取。注册即送每日 2000 次免费调用。</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">模型</label>
+          <select class="form-select" id="msApiModel" onchange="saveConfig()">
+            <option>Qwen/Qwen2.5-72B-Instruct（效果最好）</option>
+            <option>Qwen/Qwen2.5-7B-Instruct（推荐）</option>
+            <option>Qwen/Qwen2.5-3B-Instruct（快速）</option>
+            <option>Qwen/Qwen2.5-Coder-7B-Instruct（代码）</option>
+            <option>deepseek-ai/DeepSeek-V3（推理）</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="testModelScopeApi()">🧪 测试 API 连通</button>
+        <div class="test-result" id="msApiTestResult"></div>
+      </div>
+
+      <h2>API 调用命令</h2>
+      <div class="card">
+        <div class="card-title">Python SDK 调用</div>
+        <pre><code>from modelscope import pipeline
+
+pipe = pipeline('text-generation', model='Qwen/Qwen2.5-7B-Instruct')
+result = pipe('你好，请介绍一下自己')
+print(result)</code><button class="copy-btn" onclick="copyText(null, this.parentElement.querySelector('code').textContent)">📋 复制</button></pre>
+      </div>
+      <div class="card">
+        <div class="card-title">curl 调用</div>
+        <pre><code>curl -X POST "https://api-inference.modelscope.cn/api/v1/models/Qwen/Qwen2.5-7B-Instruct" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"input": {"messages": [{"role": "user", "content": "你好"}]}}'</code><button class="copy-btn" onclick="copyText(null, this.parentElement.querySelector('code').textContent)">📋 复制</button></pre>
+      </div>
+
+      <div class="tip">
+        <strong>免费额度：</strong>ModelScope API-Inference 每日提供 2000 次免费调用，覆盖 5000+ 开源模型。高并发场景建议使用 DashScope 商业 API。
+      </div>
+    </div>
+
+    <!-- Local Download Mode -->
+    <div class="tab-panel" id="tab-ms-local">
+      <h2>推荐模型</h2>
+      <div class="card">
+        <table>
+          <thead><tr><th>模型</th><th>大小</th><th>说明</th><th>命令</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>QwenPaw-Flash-2B</strong></td><td>~4GB</td><td>Agent 专用优化</td>
+              <td><button class="btn btn-sm btn-outline" onclick="copyText(null, 'python -m modelscope download --model AgentScope/QwenPaw-Flash-2B --local_dir ./models/QwenPaw-Flash-2B')">📋 复制命令</button></td>
+            </tr>
+            <tr>
+              <td><strong>Qwen2.5-7B-Instruct</strong></td><td>~15GB</td><td>效果最好</td>
+              <td><button class="btn btn-sm btn-outline" onclick="copyText(null, 'python -m modelscope download --model Qwen/Qwen2.5-7B-Instruct --local_dir ./models/Qwen2.5-7B-Instruct')">📋 复制命令</button></td>
+            </tr>
+            <tr>
+              <td><strong>Qwen2.5-3B-Instruct</strong></td><td>~6GB</td><td>平衡选择</td>
+              <td><button class="btn btn-sm btn-outline" onclick="copyText(null, 'python -m modelscope download --model Qwen/Qwen2.5-3B-Instruct --local_dir ./models/Qwen2.5-3B-Instruct')">📋 复制命令</button></td>
+            </tr>
+            <tr>
+              <td><strong>Qwen2.5-1.5B-Instruct</strong></td><td>~3GB</td><td>轻量级</td>
+              <td><button class="btn btn-sm btn-outline" onclick="copyText(null, 'python -m modelscope download --model Qwen/Qwen2.5-1.5B-Instruct --local_dir ./models/Qwen2.5-1.5B-Instruct')">📋 复制命令</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>自定义模型下载</h2>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">ModelScope 模型路径</label>
+          <input class="form-input" id="customMsPath" placeholder="例如: Qwen/Qwen2.5-14B-Instruct" />
+          <div class="form-hint">格式: 组织名/模型名，与 ModelScope 网站路径一致</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">本地保存名称</label>
+          <input class="form-input" id="customMsName" placeholder="例如: Qwen2.5-14B-Instruct" />
+        </div>
+        <button class="btn btn-primary" onclick="generateMsDownloadCmd()">📋 生成下载命令</button>
+      </div>
+      <div id="msCustomCmdOutput" style="display:none;">
+        <div class="card">
+          <pre><code id="msCustomCmd"></code><button class="copy-btn" onclick="copyText('msCustomCmd')">📋 复制</button></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Custom Models ============ -->
+  <div class="page" id="page-custom-models">
+    <h1>✏️ 自定义模型</h1>
+    <p>添加兼容 OpenAI 协议的第三方 API、本地模型或自定义推理端点。</p>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this, 'tab-cm-api')">☁️ 自定义 API</div>
+      <div class="tab" onclick="switchTab(this, 'tab-cm-local')">📦 本地模型</div>
+      <div class="tab" onclick="switchTab(this, 'tab-cm-list')">📋 已添加模型</div>
+    </div>
+
+    <!-- Custom API -->
+    <div class="tab-panel active" id="tab-cm-api">
+      <h2>添加自定义 API 端点</h2>
+      <p>支持所有兼容 OpenAI 协议的 API 服务，如 DeepSeek、硅基流动、智谱 GLM、本地 vLLM 等。</p>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">模型名称（显示用）</label>
+          <input class="form-input" id="cmApiName" placeholder="例如: DeepSeek V3" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">API Base URL</label>
+          <input class="form-input" id="cmApiUrl" placeholder="例如: https://api.deepseek.com/v1" />
+          <div class="form-hint">兼容 OpenAI 协议的端点地址，以 /v1 结尾</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">API Key</label>
+          <input class="form-input" type="password" id="cmApiKey" placeholder="sk-xxxxxxxx" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">模型 ID</label>
+          <input class="form-input" id="cmApiModelId" placeholder="例如: deepseek-chat" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">协议</label>
+          <select class="form-select" id="cmApiProtocol">
+            <option value="openai">OpenAI 兼容协议</option>
+            <option value="dashscope">DashScope 协议</option>
+            <option value="modelscope">ModelScope 协议</option>
+          </select>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="addCustomApiModel()">➕ 添加模型</button>
+          <button class="btn btn-outline" onclick="testCustomApi()">🧪 测试连通性</button>
+        </div>
+        <div class="test-result" id="cmApiTestResult"></div>
+      </div>
+
+      <h2>快捷预设</h2>
+      <div class="provider-grid">
+        <div class="provider-card" onclick="fillPreset('deepseek')">
+          <div class="provider-header">
+            <div class="provider-icon" style="background:linear-gradient(135deg,#4d6bfe,#0066ff)">D</div>
+            <div><div class="provider-name">DeepSeek</div><div class="provider-desc">api.deepseek.com</div></div>
+          </div>
+          <span class="provider-tag tag-domestic">国内可访问</span>
+        </div>
+        <div class="provider-card" onclick="fillPreset('siliconflow')">
+          <div class="provider-header">
+            <div class="provider-icon" style="background:linear-gradient(135deg,#7c3aed,#a855f7)">S</div>
+            <div><div class="provider-name">硅基流动</div><div class="provider-desc">siliconflow.cn</div></div>
+          </div>
+          <span class="provider-tag tag-domestic">国内直连</span>
+          <span class="provider-tag tag-free">免费额度</span>
+        </div>
+        <div class="provider-card" onclick="fillPreset('zhipu')">
+          <div class="provider-header">
+            <div class="provider-icon" style="background:linear-gradient(135deg,#2563eb,#3b82f6)">G</div>
+            <div><div class="provider-name">智谱 GLM</div><div class="provider-desc">open.bigmodel.cn</div></div>
+          </div>
+          <span class="provider-tag tag-domestic">国内直连</span>
+        </div>
+        <div class="provider-card" onclick="fillPreset('vllm')">
+          <div class="provider-header">
+            <div class="provider-icon" style="background:linear-gradient(135deg,#059669,#10b981)">V</div>
+            <div><div class="provider-name">本地 vLLM</div><div class="provider-desc">localhost:8000</div></div>
+          </div>
+          <span class="provider-tag tag-offline">本地推理</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Local Model -->
+    <div class="tab-panel" id="tab-cm-local">
+      <h2>添加本地模型</h2>
+      <p>添加U盘内已有的本地模型或 GGUF 格式模型。</p>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">模型名称</label>
+          <input class="form-input" id="cmLocalName" placeholder="例如: My Qwen2.5 7B" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">模型路径</label>
+          <input class="form-input" id="cmLocalPath" placeholder="例如: ./models/my-qwen2.5-7b" />
+          <div class="form-hint">相对于Q-Paw根目录的路径，或绝对路径</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">推理引擎</label>
+          <select class="form-select" id="cmLocalRunner">
+            <option value="transformers">Transformers（HuggingFace 格式）</option>
+            <option value="llama_cpp">llama.cpp（GGUF 格式）</option>
+            <option value="vllm">vLLM</option>
+            <option value="ollama">Ollama</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="addCustomLocalModel()">➕ 添加本地模型</button>
+      </div>
+    </div>
+
+    <!-- Custom Model List -->
+    <div class="tab-panel" id="tab-cm-list">
+      <h2>已添加的自定义模型</h2>
+      <div id="customModelList">
+        <p style="color:var(--dim)">尚未添加自定义模型。</p>
+      </div>
+      <div class="btn-group" style="margin-top:16px;">
+        <button class="btn btn-outline" onclick="exportCustomModels()">📥 导出 custom-models.yaml</button>
+        <button class="btn btn-danger btn-sm" onclick="clearCustomModels()">🗑️ 清空所有自定义模型</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Config Page ============ -->
+  <div class="page" id="page-config">
+    <h1>⚙️ 基本配置</h1>
+    <p>配置 Q-Paw 便携模式的环境变量和运行参数。</p>
+
+    <h2>运行模式</h2>
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">模型运行模式</label>
+        <select class="form-select" id="cfgMode" onchange="saveConfig()">
+          <option value="online">在线模式（需要网络，调用云端 API）</option>
+          <option value="local">离线模式（使用本地模型，无需网络）</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">默认本地模型</label>
+        <input class="form-input" id="cfgDefaultModel" value="QwenPaw-Flash-2B" oninput="saveConfig()" />
+        <div class="form-hint">离线模式时使用的默认模型名称</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">推理后端</label>
+        <select class="form-select" id="cfgBackend" onchange="saveConfig()">
+          <option value="auto">自动检测</option>
+          <option value="llama_cpp">llama.cpp</option>
+          <option value="ollama">Ollama</option>
+        </select>
+      </div>
+    </div>
+
+    <h2>安全设置</h2>
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">工具守卫（拦截危险命令）</label>
+        <select class="form-select" id="cfgToolGuard" onchange="saveConfig()">
+          <option value="1">启用</option>
+          <option value="0">禁用</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">文件防护（限制文件访问范围）</label>
+        <select class="form-select" id="cfgFileGuard" onchange="saveConfig()">
+          <option value="1">启用</option>
+          <option value="0">禁用</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">技能安全扫描</label>
+        <select class="form-select" id="cfgSkillScan" onchange="saveConfig()">
+          <option value="1">启用</option>
+          <option value="0">禁用</option>
+        </select>
+      </div>
+    </div>
+
+    <h2>导出配置</h2>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="exportPortableEnv()">📥 导出 portable.env</button>
+      <button class="btn btn-primary" onclick="exportConfigYaml()">📥 导出 config.yaml</button>
+      <button class="btn btn-outline" onclick="exportAllConfig()">📦 导出全部配置</button>
+    </div>
+  </div>
+
+  <!-- ============ Channels Page ============ -->
+  <div class="page" id="page-channels">
+    <h1>💬 聊天渠道</h1>
+    <p>配置 QwenPaw 连接的聊天平台。</p>
+
+    <h2>已配置渠道</h2>
+    <div id="channelList">
+      <p style="color:var(--dim)">尚未配置任何聊天渠道。</p>
+    </div>
+
+    <h2>添加渠道</h2>
+    <div class="provider-grid">
+      <div class="provider-card" onclick="addChannel('dingtalk')">
+        <div class="provider-header">
+          <div class="provider-icon" style="background:#0089FF">钉</div>
+          <div><div class="provider-name">钉钉</div></div>
+        </div>
+      </div>
+      <div class="provider-card" onclick="addChannel('feishu')">
+        <div class="provider-header">
+          <div class="provider-icon" style="background:#3370FF">飞</div>
+          <div><div class="provider-name">飞书</div></div>
+        </div>
+      </div>
+      <div class="provider-card" onclick="addChannel('qq')">
+        <div class="provider-header">
+          <div class="provider-icon" style="background:#12B7F5">Q</div>
+          <div><div class="provider-name">QQ</div></div>
+        </div>
+      </div>
+      <div class="provider-card" onclick="addChannel('wechat')">
+        <div class="provider-header">
+          <div class="provider-icon" style="background:#07C160">微</div>
+          <div><div class="provider-name">微信</div></div>
+        </div>
+      </div>
+      <div class="provider-card" onclick="addChannel('discord')">
+        <div class="provider-header">
+          <div class="provider-icon" style="background:#5865F2">D</div>
+          <div><div class="provider-name">Discord</div></div>
+        </div>
+      </div>
+      <div class="provider-card" onclick="addChannel('telegram')">
+        <div class="provider-header">
+          <div class="provider-icon" style="background:#26A5E4">T</div>
+          <div><div class="provider-name">Telegram</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <strong>提示：</strong>渠道配置需要在 QwenPaw 启动后通过其界面或配置文件完成。这里提供配置模板供参考。
+    </div>
+  </div>
+
+  <!-- ============ Migrate Page ============ -->
+  <div class="page" id="page-migrate">
+    <h1>🔄 数据迁移</h1>
+    <p>从旧版本 Q-Paw 目录合并数据到当前目录。</p>
+
+    <h2>迁移命令</h2>
+    <div class="card">
+      <div class="card-title">Windows</div>
+      <pre><code>migrate.bat</code><button class="copy-btn" onclick="copyText(null, 'migrate.bat')">📋 复制</button></pre>
+    </div>
+    <div class="card">
+      <div class="card-title">macOS / Linux</div>
+      <pre><code>./migrate.sh</code><button class="copy-btn" onclick="copyText(null, './migrate.sh')">📋 复制</button></pre>
+    </div>
+
+    <h2>迁移策略</h2>
+    <div class="card">
+      <ul style="padding-left:20px; margin-top:8px;">
+        <li><strong>模型</strong> — 复制到新目录，已存在则跳过</li>
+        <li><strong>数据</strong>（聊天记录、技能等）— 复制较新文件，不覆盖已有</li>
+        <li><strong>配置</strong> — 智能合并：保留新配置结构 + 补充旧配置中的自定义值</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ Help Page ============ -->
+  <div class="page" id="page-help">
+    <h1>📖 使用指南</h1>
+
+    <h2>快速开始</h2>
+    <div class="card">
+      <h3>1. 初始化环境</h3>
+      <pre><code>:: Windows
+setup.bat
+
+# macOS / Linux
+chmod +x setup.sh && ./setup.sh</code><button class="copy-btn" onclick="copyText(null, this.parentElement.querySelector('code').textContent)">📋 复制</button></pre>
+      <p>脚本会自动下载 Python、安装 QwenPaw 及依赖，<strong>全部使用国内镜像加速</strong>。</p>
+
+      <h3>2. 配置 API Key</h3>
+      <p>在「API 配置」页面填写至少一个提供商的 API Key，然后导出配置。</p>
+
+      <h3>3. 启动 QwenPaw</h3>
+      <pre><code>:: Windows
+launch.bat
+
+# macOS / Linux
+./launch.sh</code><button class="copy-btn" onclick="copyText(null, this.parentElement.querySelector('code').textContent)">📋 复制</button></pre>
+    </div>
+
+    <h2>镜像加速 & 包管理说明</h2>
+    <div class="card">
+      <p><strong>uv</strong> 是 Astral 团队开发的 Python 包管理器，安装速度比 pip 快 10-100 倍。</p>
+      <p>Q-Paw 默认使用 uv，如果 uv 安装失败则自动回退到 pip，两种方式都能正常工作。</p>
+      <table>
+        <thead><tr><th>组件</th><th>包管理</th><th>国内镜像</th><th>回退</th></tr></thead>
+        <tbody>
+          <tr><td>uv 二进制</td><td>—</td><td>NPMMirror</td><td>GitHub</td></tr>
+          <tr><td>Python 嵌入包</td><td>—</td><td>NPMMirror / 华为云</td><td>python.org</td></tr>
+          <tr><td>Miniconda</td><td>—</td><td>清华 TUNA</td><td>anaconda.com</td></tr>
+          <tr><td>QwenPaw 等包</td><td><strong>uv 优先</strong> / pip 兜底</td><td>阿里云 / 清华 / 华为云</td><td>pypi.org</td></tr>
+          <tr><td>ModelScope 模型</td><td>—</td><td>魔搭（国内直连）</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>目录结构</h2>
+    <div class="card">
+      <pre><code>Q-Paw/
+├── index.html          ← 本控制台
+├── setup.bat / .sh     ← 环境初始化（自动安装 uv + Python）
+├── launch.bat / .sh    ← 启动 QwenPaw
+├── model-manager.bat / .sh  ← 模型管理
+├── migrate.bat / .sh   ← 数据迁移
+├── cleanup.bat         ← 清理空间
+├── bin/                ← uv 等工具二进制
+├── python/             ← 便携 Python
+├── models/             ← 本地模型
+├── data/               ← 聊天记录、技能
+├── config/             ← 配置文件
+└── logs/               ← 日志</code><button class="copy-btn" onclick="copyText(null, this.parentElement.querySelector('code').textContent)">📋 复制</button></pre>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ============================================
+// Q-Paw Console - Core Logic
+// All configs saved to localStorage
+// ============================================
+
+const STORAGE_KEY = 'qpaw_config';
+
+// --- Config Management ---
+function getConfig() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function saveConfig() {
+  const cfg = getConfig();
+  // API configs
+  cfg.dashscope = { apiKey: el('dsApiKey').value, model: el('dsModel').value };
+  cfg.openai = { apiKey: el('oaiApiKey').value, baseUrl: el('oaiBaseUrl').value, model: el('oaiModel').value };
+  cfg.openrouter = { apiKey: el('orApiKey').value, model: el('orModel').value };
+  cfg.modelscope = { apiKey: el('msApiKey').value, model: el('msModel').value };
+  cfg.modelscopeApi = { token: el('msApiToken').value, model: el('msApiModel').value };
+  // General config
+  cfg.general = {
+    mode: el('cfgMode').value,
+    defaultModel: el('cfgDefaultModel').value,
+    backend: el('cfgBackend').value,
+    toolGuard: el('cfgToolGuard').value,
+    fileGuard: el('cfgFileGuard').value,
+    skillScan: el('cfgSkillScan').value,
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
+  updateDashboard();
+  updateApiSummary();
+  updateLaunchCmd();
+}
+
+function loadConfig() {
+  const cfg = getConfig();
+  if (cfg.dashscope) { el('dsApiKey').value = cfg.dashscope.apiKey || ''; el('dsModel').value = cfg.dashscope.model || 'qwen-plus'; }
+  if (cfg.openai) { el('oaiApiKey').value = cfg.openai.apiKey || ''; el('oaiBaseUrl').value = cfg.openai.baseUrl || ''; el('oaiModel').value = cfg.openai.model || 'gpt-4o'; }
+  if (cfg.openrouter) { el('orApiKey').value = cfg.openrouter.apiKey || ''; el('orModel').value = cfg.openrouter.model || 'qwen/qwen-2.5-72b-instruct'; }
+  if (cfg.modelscope) { el('msApiKey').value = cfg.modelscope.apiKey || ''; el('msModel').value = cfg.modelscope.model || 'Qwen/Qwen2.5-7B-Instruct'; }
+  if (cfg.modelscopeApi) { el('msApiToken').value = cfg.modelscopeApi.token || ''; el('msApiModel').value = cfg.modelscopeApi.model || 'Qwen/Qwen2.5-7B-Instruct（推荐）'; }
+  if (cfg.general) {
+    el('cfgMode').value = cfg.general.mode || 'online';
+    el('cfgDefaultModel').value = cfg.general.defaultModel || 'QwenPaw-Flash-2B';
+    el('cfgBackend').value = cfg.general.backend || 'auto';
+    el('cfgToolGuard').value = cfg.general.toolGuard || '1';
+    el('cfgFileGuard').value = cfg.general.fileGuard || '1';
+    el('cfgSkillScan').value = cfg.general.skillScan || '1';
+  }
+  updateDashboard();
+  updateApiSummary();
+  updateLaunchCmd();
+  renderCustomModels();
+  renderChannels();
+}
+
+function el(id) { return document.getElementById(id); }
+
+// --- Page Navigation ---
+function showPage(pageName) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + pageName);
+  if (page) page.classList.add('active');
+  document.querySelectorAll('.nav-item[data-page="' + pageName + '"]').forEach(n => n.classList.add('active'));
+  if (pageName === 'launch') updateLaunchCmd();
+}
+
+function toggleSidebar() {
+  el('sidebar').classList.toggle('open');
+}
+
+// --- Tab Switching ---
+function switchTab(tabEl, panelId) {
+  const tabs = tabEl.parentElement.querySelectorAll('.tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+  const panels = tabEl.parentElement.parentElement.querySelectorAll('.tab-panel');
+  panels.forEach(p => p.classList.remove('active'));
+  el(panelId).classList.add('active');
+}
+
+// --- Launch Mode ---
+let launchMode = 'online';
+function selectLaunchMode(cardEl, mode) {
+  launchMode = mode;
+  cardEl.parentElement.querySelectorAll('.provider-card').forEach(c => c.classList.remove('selected'));
+  cardEl.classList.add('selected');
+  updateLaunchCmd();
+}
+
+function updateLaunchCmd() {
+  const cfg = getConfig();
+  let cmd = '';
+  if (launchMode === 'online') {
+    const provider = getActiveProvider(cfg);
+    const envLines = [];
+    if (cfg.dashscope && cfg.dashscope.apiKey) envLines.push('set DASHSCOPE_API_KEY=' + cfg.dashscope.apiKey);
+    if (cfg.openai && cfg.openai.apiKey) envLines.push('set OPENAI_API_KEY=' + cfg.openai.apiKey);
+    if (cfg.openai && cfg.openai.baseUrl) envLines.push('set OPENAI_BASE_URL=' + cfg.openai.baseUrl);
+    if (envLines.length > 0) {
+      cmd = ':: Windows - 先设置环境变量\n' + envLines.join('\n') + '\n\n:: 然后启动\npython -m qwenpaw app\n\n# macOS/Linux\nexport DASHSCOPE_API_KEY=xxx\npython3 -m qwenpaw app';
+    } else {
+      cmd = ':: 尚未配置 API Key，请先在「API 配置」页填写\n:: 配置后，启动命令:\npython -m qwenpaw app';
+    }
+  } else {
+    const model = cfg.general ? cfg.general.defaultModel : 'QwenPaw-Flash-2B';
+    cmd = ':: 离线模式 - 使用本地模型\npython -m qwenpaw app --model ' + model;
+  }
+  el('launchCmd').textContent = cmd;
+}
+
+function getActiveProvider(cfg) {
+  if (cfg.dashscope && cfg.dashscope.apiKey) return 'dashscope';
+  if (cfg.openai && cfg.openai.apiKey) return 'openai';
+  if (cfg.openrouter && cfg.openrouter.apiKey) return 'openrouter';
+  if (cfg.modelscope && cfg.modelscope.apiKey) return 'modelscope';
+  return 'none';
+}
+
+// --- API Testing ---
+async function testDashScope() {
+  const key = el('dsApiKey').value;
+  if (!key) return showTestResult('dsTestResult', 'fail', '请先填写 API Key');
+  showTestResult('dsTestResult', 'loading', '正在测试...');
+  try {
+    const resp = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: el('dsModel').value, input: { messages: [{ role: 'user', content: 'hi' }] } })
+    });
+    if (resp.ok || resp.status === 200) showTestResult('dsTestResult', 'success', '连接成功！DashScope API 可用。');
+    else if (resp.status === 401) showTestResult('dsTestResult', 'fail', 'API Key 无效，请检查。');
+    else showTestResult('dsTestResult', 'fail', 'HTTP ' + resp.status + ' - 请检查配置。');
+  } catch (e) {
+    showTestResult('dsTestResult', 'fail', '网络错误: ' + e.message + '（可能是跨域限制，实际命令行中可用）');
+  }
+}
+
+async function testOpenAI() {
+  const key = el('oaiApiKey').value;
+  if (!key) return showTestResult('oaiTestResult', 'fail', '请先填写 API Key');
+  showTestResult('oaiTestResult', 'loading', '正在测试...');
+  const baseUrl = el('oaiBaseUrl').value || 'https://api.openai.com';
+  try {
+    const resp = await fetch(baseUrl.replace(/\/$/, '') + '/v1/models', {
+      headers: { 'Authorization': 'Bearer ' + key }
+    });
+    if (resp.ok) showTestResult('oaiTestResult', 'success', '连接成功！OpenAI API 可用。');
+    else if (resp.status === 401) showTestResult('oaiTestResult', 'fail', 'API Key 无效。');
+    else showTestResult('oaiTestResult', 'fail', 'HTTP ' + resp.status);
+  } catch (e) {
+    showTestResult('oaiTestResult', 'fail', '网络错误: ' + e.message + '（可能是跨域限制，实际命令行中可用）');
+  }
+}
+
+async function testOpenRouter() {
+  const key = el('orApiKey').value;
+  if (!key) return showTestResult('orTestResult', 'fail', '请先填写 API Key');
+  showTestResult('orTestResult', 'loading', '正在测试...');
+  try {
+    const resp = await fetch('https://openrouter.ai/api/v1/models', {
+      headers: { 'Authorization': 'Bearer ' + key }
+    });
+    if (resp.ok) showTestResult('orTestResult', 'success', '连接成功！OpenRouter API 可用。');
+    else showTestResult('orTestResult', 'fail', 'HTTP ' + resp.status);
+  } catch (e) {
+    showTestResult('orTestResult', 'fail', '网络错误: ' + e.message + '（可能是跨域限制，实际命令行中可用）');
+  }
+}
+
+async function testModelScope() {
+  const token = el('msApiKey').value;
+  if (!token) return showTestResult('msTestResult', 'fail', '请先填写 SDK Token');
+  showTestResult('msTestResult', 'loading', '正在测试...');
+  try {
+    const resp = await fetch('https://api-inference.modelscope.cn/api/v1/models', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (resp.ok) showTestResult('msTestResult', 'success', '连接成功！ModelScope API 可用。');
+    else showTestResult('msTestResult', 'fail', 'HTTP ' + resp.status);
+  } catch (e) {
+    showTestResult('msTestResult', 'fail', '网络错误: ' + e.message + '（可能是跨域限制，实际命令行中可用）');
+  }
+}
+
+async function testModelScopeApi() {
+  const token = el('msApiToken').value;
+  if (!token) return showTestResult('msApiTestResult', 'fail', '请先填写 SDK Token');
+  showTestResult('msApiTestResult', 'loading', '正在测试...');
+  try {
+    const resp = await fetch('https://api-inference.modelscope.cn/api/v1/models', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (resp.ok) showTestResult('msApiTestResult', 'success', '连接成功！ModelScope API 可用。');
+    else showTestResult('msApiTestResult', 'fail', 'HTTP ' + resp.status);
+  } catch (e) {
+    showTestResult('msApiTestResult', 'fail', '网络错误: ' + e.message);
+  }
+}
+
+async function testCustomApi() {
+  const url = el('cmApiUrl').value;
+  const key = el('cmApiKey').value;
+  if (!url) return showTestResult('cmApiTestResult', 'fail', '请先填写 API Base URL');
+  showTestResult('cmApiTestResult', 'loading', '正在测试...');
+  try {
+    const headers = {};
+    if (key) headers['Authorization'] = 'Bearer ' + key;
+    const resp = await fetch(url.replace(/\/$/, '') + '/models', { headers });
+    if (resp.ok) showTestResult('cmApiTestResult', 'success', '连接成功！自定义 API 可用。');
+    else showTestResult('cmApiTestResult', 'fail', 'HTTP ' + resp.status);
+  } catch (e) {
+    showTestResult('cmApiTestResult', 'fail', '网络错误: ' + e.message + '（可能是跨域限制，实际命令行中可用）');
+  }
+}
+
+function showTestResult(elId, type, msg) {
+  const el = document.getElementById(elId);
+  el.className = 'test-result show ' + type;
+  el.textContent = type === 'loading' ? '⏳ ' + msg : type === 'success' ? '✅ ' + msg : '❌ ' + msg;
+}
+
+// --- Custom Model Management ---
+function getCustomModels() {
+  try { return JSON.parse(localStorage.getItem('qpaw_custom_models') || '[]'); } catch { return []; }
+}
+
+function addCustomApiModel() {
+  const name = el('cmApiName').value.trim();
+  const url = el('cmApiUrl').value.trim();
+  const key = el('cmApiKey').value.trim();
+  const modelId = el('cmApiModelId').value.trim();
+  const protocol = el('cmApiProtocol').value;
+  if (!name || !url || !modelId) { toast('请填写模型名称、API URL 和模型 ID', 'error'); return; }
+  const models = getCustomModels();
+  models.push({ type: 'api', name, baseUrl: url, apiKey: key, modelId, protocol, id: Date.now() });
+  localStorage.setItem('qpaw_custom_models', JSON.stringify(models));
+  el('cmApiName').value = ''; el('cmApiUrl').value = ''; el('cmApiKey').value = ''; el('cmApiModelId').value = '';
+  renderCustomModels();
+  toast('自定义 API 模型已添加: ' + name, 'success');
+  updateDashboard();
+}
+
+function addCustomLocalModel() {
+  const name = el('cmLocalName').value.trim();
+  const path = el('cmLocalPath').value.trim();
+  const runner = el('cmLocalRunner').value;
+  if (!name || !path) { toast('请填写模型名称和路径', 'error'); return; }
+  const models = getCustomModels();
+  models.push({ type: 'local', name, path, runner, id: Date.now() });
+  localStorage.setItem('qpaw_custom_models', JSON.stringify(models));
+  el('cmLocalName').value = ''; el('cmLocalPath').value = '';
+  renderCustomModels();
+  toast('本地模型已添加: ' + name, 'success');
+  updateDashboard();
+}
+
+function removeCustomModel(id) {
+  const models = getCustomModels().filter(m => m.id !== id);
+  localStorage.setItem('qpaw_custom_models', JSON.stringify(models));
+  renderCustomModels();
+  updateDashboard();
+}
+
+function clearCustomModels() {
+  if (!confirm('确定要清空所有自定义模型吗？')) return;
+  localStorage.setItem('qpaw_custom_models', '[]');
+  renderCustomModels();
+  updateDashboard();
+  toast('已清空所有自定义模型', 'info');
+}
+
+function renderCustomModels() {
+  const models = getCustomModels();
+  const container = el('customModelList');
+  if (models.length === 0) {
+    container.innerHTML = '<p style="color:var(--dim)">尚未添加自定义模型。</p>';
+    return;
+  }
+  container.innerHTML = models.map(m => {
+    const isApi = m.type === 'api';
+    return `<div class="custom-model-item">
+      <div class="model-header">
+        <span class="model-name">${escHtml(m.name)}</span>
+        <div>
+          <span class="badge ${isApi ? 'badge-purple' : 'badge-orange'}">${isApi ? 'API' : '本地'}</span>
+          <button class="btn btn-sm btn-danger" onclick="removeCustomModel(${m.id})" style="margin-left:6px;">删除</button>
+        </div>
+      </div>
+      ${isApi ? `<div class="model-detail">URL: ${escHtml(m.baseUrl)} · 模型: ${escHtml(m.modelId)} · 协议: ${escHtml(m.protocol)}</div>` : ''}
+      ${!isApi ? `<div class="model-detail">路径: ${escHtml(m.path)} · 引擎: ${escHtml(m.runner)}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function fillPreset(preset) {
+  const presets = {
+    deepseek: { name: 'DeepSeek V3', url: 'https://api.deepseek.com/v1', modelId: 'deepseek-chat', protocol: 'openai' },
+    siliconflow: { name: 'SiliconFlow Qwen2.5', url: 'https://api.siliconflow.cn/v1', modelId: 'Qwen/Qwen2.5-7B-Instruct', protocol: 'openai' },
+    zhipu: { name: 'GLM-4', url: 'https://open.bigmodel.cn/api/paas/v4', modelId: 'glm-4', protocol: 'openai' },
+    vllm: { name: 'Local vLLM', url: 'http://localhost:8000/v1', modelId: 'Qwen/Qwen2.5-7B-Instruct', protocol: 'openai' },
+  };
+  const p = presets[preset];
+  if (!p) return;
+  el('cmApiName').value = p.name;
+  el('cmApiUrl').value = p.url;
+  el('cmApiModelId').value = p.modelId;
+  el('cmApiProtocol').value = p.protocol;
+  toast('已填充预设: ' + p.name, 'info');
+}
+
+// --- Channel Management ---
+function getChannels() {
+  try { return JSON.parse(localStorage.getItem('qpaw_channels') || '[]'); } catch { return []; }
+}
+
+function addChannel(type) {
+  const names = { dingtalk: '钉钉', feishu: '飞书', qq: 'QQ', wechat: '微信', discord: 'Discord', telegram: 'Telegram' };
+  const channels = getChannels();
+  if (channels.find(c => c.type === type)) { toast(names[type] + ' 已添加', 'error'); return; }
+  channels.push({ type, name: names[type], id: Date.now() });
+  localStorage.setItem('qpaw_channels', JSON.stringify(channels));
+  renderChannels();
+  updateDashboard();
+  toast('已添加渠道: ' + names[type], 'success');
+}
+
+function removeChannel(id) {
+  const channels = getChannels().filter(c => c.id !== id);
+  localStorage.setItem('qpaw_channels', JSON.stringify(channels));
+  renderChannels();
+  updateDashboard();
+}
+
+function renderChannels() {
+  const channels = getChannels();
+  const container = el('channelList');
+  if (channels.length === 0) {
+    container.innerHTML = '<p style="color:var(--dim)">尚未配置任何聊天渠道。</p>';
+    return;
+  }
+  container.innerHTML = channels.map(c => {
+    return `<div class="custom-model-item">
+      <div class="model-header">
+        <span class="model-name">${escHtml(c.name)}</span>
+        <button class="btn btn-sm btn-danger" onclick="removeChannel(${c.id})">删除</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// --- Export Functions ---
+function exportEnvScript(type) {
+  const cfg = getConfig();
+  let content = '';
+  if (type === 'bat') {
+    content = '@echo off\n:: Q-Paw API Configuration - Auto Generated\nchcp 65001 >nul 2>&1\n\n';
+    if (cfg.dashscope && cfg.dashscope.apiKey) content += 'set DASHSCOPE_API_KEY=' + cfg.dashscope.apiKey + '\n';
+    if (cfg.openai && cfg.openai.apiKey) content += 'set OPENAI_API_KEY=' + cfg.openai.apiKey + '\n';
+    if (cfg.openai && cfg.openai.baseUrl) content += 'set OPENAI_BASE_URL=' + cfg.openai.baseUrl + '\n';
+    if (cfg.openrouter && cfg.openrouter.apiKey) content += 'set OPENROUTER_API_KEY=' + cfg.openrouter.apiKey + '\n';
+    if (cfg.modelscope && cfg.modelscope.apiKey) content += 'set MODELSCOPE_API_TOKEN=' + cfg.modelscope.apiKey + '\n';
+    content += '\necho API keys configured.\n';
+  } else {
+    content = '#!/bin/bash\n# Q-Paw API Configuration - Auto Generated\n\n';
+    if (cfg.dashscope && cfg.dashscope.apiKey) content += 'export DASHSCOPE_API_KEY="' + cfg.dashscope.apiKey + '"\n';
+    if (cfg.openai && cfg.openai.apiKey) content += 'export OPENAI_API_KEY="' + cfg.openai.apiKey + '"\n';
+    if (cfg.openai && cfg.openai.baseUrl) content += 'export OPENAI_BASE_URL="' + cfg.openai.baseUrl + '"\n';
+    if (cfg.openrouter && cfg.openrouter.apiKey) content += 'export OPENROUTER_API_KEY="' + cfg.openrouter.apiKey + '"\n';
+    if (cfg.modelscope && cfg.modelscope.apiKey) content += 'export MODELSCOPE_API_TOKEN="' + cfg.modelscope.apiKey + '"\n';
+    content += '\necho "API keys configured."\n';
+  }
+  downloadFile('set-env.' + type, content);
+  toast('已导出 set-env.' + type, 'success');
+}
+
+function exportPortableEnv() {
+  const cfg = getConfig();
+  let content = '# Q-Paw Portable Config - Auto Generated\n';
+  content += 'QP_PORTABLE_MODE=1\n';
+  content += 'QP_MODEL_MODE=' + (cfg.general ? cfg.general.mode : 'online') + '\n';
+  if (cfg.general && cfg.general.defaultModel) content += 'QP_DEFAULT_MODEL=' + cfg.general.defaultModel + '\n';
+  if (cfg.general) {
+    content += 'QP_TOOL_GUARD=' + cfg.general.toolGuard + '\n';
+    content += 'QP_FILE_GUARD=' + cfg.general.fileGuard + '\n';
+    content += 'QP_SKILL_SCAN=' + cfg.general.skillScan + '\n';
+  }
+  content += 'QP_PIP_MIRROR=https://mirrors.aliyun.com/pypi/simple/\n';
+  if (cfg.dashscope && cfg.dashscope.apiKey) content += 'QP_DASHSCOPE_KEY=' + cfg.dashscope.apiKey + '\n';
+  if (cfg.openai && cfg.openai.apiKey) content += 'QP_OPENAI_KEY=' + cfg.openai.apiKey + '\n';
+  downloadFile('portable.env', content);
+  toast('已导出 portable.env', 'success');
+}
+
+function exportConfigYaml() {
+  const cfg = getConfig();
+  const models = getCustomModels();
+  let content = '# QwenPaw Configuration - Auto Generated by Q-Paw\n\n';
+  content += 'portable:\n  enabled: true\n  data_dir: "./data"\n  config_dir: "./config"\n  models_dir: "./models"\n  logs_dir: "./logs"\n\n';
+  content += 'model:\n  mode: "' + (cfg.general ? cfg.general.mode : 'online') + '"\n';
+  if (cfg.general && cfg.general.defaultModel) content += '  default_local_model: "' + cfg.general.defaultModel + '"\n';
+  content += '  inference_backend: "' + (cfg.general ? cfg.general.backend : 'auto') + '"\n  gpu_accel: true\n\n';
+  content += 'api:\n';
+  if (cfg.dashscope && cfg.dashscope.apiKey) content += '  provider: "dashscope"\n  # api_key: "SET_VIA_ENV"\n  model: "' + cfg.dashscope.model + '"\n';
+  else if (cfg.openai && cfg.openai.apiKey) content += '  provider: "openai"\n  # api_key: "SET_VIA_ENV"\n  base_url: "' + (cfg.openai.baseUrl || 'https://api.openai.com/v1') + '"\n  model: "' + cfg.openai.model + '"\n';
+  else content += '  provider: "dashscope"\n  # api_key: "SET_VIA_ENV"\n';
+  content += '\nsecurity:\n  tool_guard: ' + (cfg.general && cfg.general.toolGuard === '1' ? 'true' : 'false') + '\n';
+  content += '  file_guard: ' + (cfg.general && cfg.general.fileGuard === '1' ? 'true' : 'false') + '\n';
+  content += '  skill_scan: ' + (cfg.general && cfg.general.skillScan === '1' ? 'true' : 'false') + '\n';
+  if (models.length > 0) {
+    content += '\n# Custom models\n';
+    const apiModels = models.filter(m => m.type === 'api');
+    const localModels = models.filter(m => m.type === 'local');
+    if (apiModels.length > 0) {
+      content += 'custom_api_models:\n';
+      apiModels.forEach(m => { content += '  - name: "' + m.name + '"\n    base_url: "' + m.baseUrl + '"\n    model_id: "' + m.modelId + '"\n    protocol: "' + m.protocol + '"\n'; });
+    }
+    if (localModels.length > 0) {
+      content += 'custom_local_models:\n';
+      localModels.forEach(m => { content += '  - name: "' + m.name + '"\n    path: "' + m.path + '"\n    runner: "' + m.runner + '"\n'; });
+    }
+  }
+  downloadFile('qwenpaw-config.yaml', content);
+  toast('已导出 config.yaml', 'success');
+}
+
+function exportCustomModels() {
+  const models = getCustomModels();
+  if (models.length === 0) { toast('没有自定义模型可导出', 'error'); return; }
+  let content = '# Custom Models Configuration - Auto Generated\n\n';
+  const apiModels = models.filter(m => m.type === 'api');
+  const localModels = models.filter(m => m.type === 'local');
+  if (apiModels.length > 0) {
+    content += 'api_models:\n';
+    apiModels.forEach(m => { content += '  - name: "' + m.name + '"\n    base_url: "' + m.baseUrl + '"\n    api_key: "' + (m.apiKey ? 'SET_VIA_ENV' : '') + '"\n    model_id: "' + m.modelId + '"\n    protocol: "' + m.protocol + '"\n\n'; });
+  }
+  if (localModels.length > 0) {
+    content += 'local_models:\n';
+    localModels.forEach(m => { content += '  - name: "' + m.name + '"\n    path: "' + m.path + '"\n    runner: "' + m.runner + '"\n\n'; });
+  }
+  downloadFile('custom-models.yaml', content);
+  toast('已导出 custom-models.yaml', 'success');
+}
+
+function exportAllConfig() {
+  const cfg = getConfig();
+  const models = getCustomModels();
+  const channels = getChannels();
+  const allData = { config: cfg, customModels: models, channels, exportTime: new Date().toISOString() };
+  downloadFile('qpaw-all-config.json', JSON.stringify(allData, null, 2));
+  toast('已导出全部配置', 'success');
+}
+
+function downloadFile(filename, content) {
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// --- ModelScope Custom Download ---
+function generateMsDownloadCmd() {
+  const path = el('customMsPath').value.trim();
+  const name = el('customMsName').value.trim();
+  if (!path) { toast('请填写模型路径', 'error'); return; }
+  const localName = name || path.split('/').pop();
+  const cmd = 'python -m modelscope download --model ' + path + ' --local_dir ./models/' + localName;
+  el('msCustomCmd').textContent = cmd;
+  el('msCustomCmdOutput').style.display = 'block';
+}
+
+// --- Dashboard Update ---
+function updateDashboard() {
+  const cfg = getConfig();
+  const models = getCustomModels();
+  const channels = getChannels();
+  // Count configured APIs
+  let apiCount = 0;
+  if (cfg.dashscope && cfg.dashscope.apiKey) apiCount++;
+  if (cfg.openai && cfg.openai.apiKey) apiCount++;
+  if (cfg.openrouter && cfg.openrouter.apiKey) apiCount++;
+  if (cfg.modelscope && cfg.modelscope.apiKey) apiCount++;
+  if (cfg.modelscopeApi && cfg.modelscopeApi.token) apiCount++;
+  el('apiConfigured').textContent = apiCount;
+  el('channelCount').textContent = channels.length;
+  el('modelCount').textContent = models.filter(m => m.type === 'local').length;
+  const mode = cfg.general ? cfg.general.mode : 'online';
+  el('modeStatus').textContent = mode === 'online' ? '在线' : '离线';
+  el('modeStatus').parentElement.className = 'status-card ' + (mode === 'online' ? 'status-online' : 'status-offline');
+  // Python/QwenPaw status - show "need setup" as hint
+  el('pyStatus').textContent = 'N/A';
+  el('qpStatus').textContent = 'N/A';
+}
+
+function updateApiSummary() {
+  const cfg = getConfig();
+  const container = el('savedApiSummary');
+  const items = [];
+  if (cfg.dashscope && cfg.dashscope.apiKey) items.push('<span class="badge badge-blue">DashScope</span> ' + cfg.dashscope.model);
+  if (cfg.openai && cfg.openai.apiKey) items.push('<span class="badge badge-green">OpenAI</span> ' + cfg.openai.model + (cfg.openai.baseUrl ? ' (' + cfg.openai.baseUrl + ')' : ''));
+  if (cfg.openrouter && cfg.openrouter.apiKey) items.push('<span class="badge badge-purple">OpenRouter</span> ' + cfg.openrouter.model);
+  if (cfg.modelscope && cfg.modelscope.apiKey) items.push('<span class="badge badge-orange">ModelScope API</span> ' + cfg.modelscope.model);
+  if (cfg.modelscopeApi && cfg.modelscopeApi.token) items.push('<span class="badge badge-orange">ModelScope</span> API 推理');
+  if (items.length === 0) {
+    container.innerHTML = '<p style="color:var(--dim)">尚未配置任何 API，请在上方填写。</p>';
+  } else {
+    container.innerHTML = items.map(i => '<div style="margin:4px 0;font-size:0.9em;">' + i + '</div>').join('');
+  }
+}
+
+// --- Utility ---
+function copyText(elId, text) {
+  const content = text || (elId ? el(elId).textContent : '');
+  navigator.clipboard.writeText(content).then(() => toast('已复制到剪贴板', 'success')).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = content;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('已复制到剪贴板', 'success');
+  });
+}
+
+function toast(msg, type) {
+  const container = el('toastContainer');
+  const div = document.createElement('div');
+  div.className = 'toast toast-' + (type || 'info');
+  div.textContent = msg;
+  container.appendChild(div);
+  setTimeout(() => { div.style.opacity = '0'; div.style.transition = 'opacity .3s'; setTimeout(() => div.remove(), 300); }, 3000);
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// --- Init ---
+document.addEventListener('DOMContentLoaded', loadConfig);
+</script>
+</body>
+</html>
