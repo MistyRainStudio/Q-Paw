@@ -251,6 +251,16 @@ echo -e " [6/6] Initializing QwenPaw workspace..."
 
 export QWENPAW_WORKING_DIR="$USB_ROOT/data"
 export QWENPAW_SECRET_DIR="$USB_ROOT/data/.secret"
+export QWENPAW_BACKUP_DIR="$USB_ROOT/data/.backups"
+
+# Redirect all caches to USB (no traces on host PC)
+export PIP_CACHE_DIR="$USB_ROOT/cache/pip"
+export UV_CACHE_DIR="$USB_ROOT/cache/uv"
+export MODELSCOPE_CACHE="$USB_ROOT/cache/modelscope"
+export HUGGINGFACE_HUB_CACHE="$USB_ROOT/cache/huggingface"
+
+mkdir -p "$QWENPAW_WORKING_DIR" "$QWENPAW_SECRET_DIR" "$QWENPAW_BACKUP_DIR"
+mkdir -p "$PIP_CACHE_DIR" "$UV_CACHE_DIR" "$MODELSCOPE_CACHE" "$HUGGINGFACE_HUB_CACHE"
 
 if [ -f "$QWENPAW_WORKING_DIR/config.json" ]; then
     echo -e " ${GREEN}OK - QwenPaw workspace already initialized, skipping.${NC}"

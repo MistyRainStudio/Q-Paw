@@ -19,6 +19,13 @@ set "PATH=%USB_ROOT%\python;%USB_ROOT%\python\Scripts;%USB_ROOT%\bin;%PATH%"
 :: --- Core portable setting: QwenPaw working directory on USB ---
 set "QWENPAW_WORKING_DIR=%USB_ROOT%\data"
 set "QWENPAW_SECRET_DIR=%USB_ROOT%\data\.secret"
+set "QWENPAW_BACKUP_DIR=%USB_ROOT%\data\.backups"
+
+:: --- Redirect all caches to USB (no traces on host PC) ---
+set "PIP_CACHE_DIR=%USB_ROOT%\cache\pip"
+set "UV_CACHE_DIR=%USB_ROOT%\cache\uv"
+set "MODELSCOPE_CACHE=%USB_ROOT%\cache\modelscope"
+set "HUGGINGFACE_HUB_CACHE=%USB_ROOT%\cache\huggingface"
 
 :: --- Portable mode flags ---
 set "QP_PORTABLE_MODE=1"
@@ -26,6 +33,12 @@ set "QP_MODELS_DIR=%USB_ROOT%\models"
 
 :: --- Ensure directories exist ---
 if not exist "%QWENPAW_WORKING_DIR%" mkdir "%QWENPAW_WORKING_DIR%"
+if not exist "%QWENPAW_SECRET_DIR%" mkdir "%QWENPAW_SECRET_DIR%"
+if not exist "%QWENPAW_BACKUP_DIR%" mkdir "%QWENPAW_BACKUP_DIR%"
+if not exist "%PIP_CACHE_DIR%" mkdir "%PIP_CACHE_DIR%"
+if not exist "%UV_CACHE_DIR%" mkdir "%UV_CACHE_DIR%"
+if not exist "%MODELSCOPE_CACHE%" mkdir "%MODELSCOPE_CACHE%"
+if not exist "%HUGGINGFACE_HUB_CACHE%" mkdir "%HUGGINGFACE_HUB_CACHE%"
 if not exist "%QP_MODELS_DIR%" mkdir "%QP_MODELS_DIR%"
 
 :: --- Check if QwenPaw workspace is initialized ---

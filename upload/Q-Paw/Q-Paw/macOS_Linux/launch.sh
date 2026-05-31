@@ -54,13 +54,22 @@ export PATH="$USB_ROOT/bin:$PYTHONHOME/bin:$PATH"
 # --- Core portable setting: QwenPaw working directory on USB ---
 export QWENPAW_WORKING_DIR="$USB_ROOT/data"
 export QWENPAW_SECRET_DIR="$USB_ROOT/data/.secret"
+export QWENPAW_BACKUP_DIR="$USB_ROOT/data/.backups"
+
+# --- Redirect all caches to USB (no traces on host PC) ---
+export PIP_CACHE_DIR="$USB_ROOT/cache/pip"
+export UV_CACHE_DIR="$USB_ROOT/cache/uv"
+export MODELSCOPE_CACHE="$USB_ROOT/cache/modelscope"
+export HUGGINGFACE_HUB_CACHE="$USB_ROOT/cache/huggingface"
 
 # --- Portable mode flags ---
 export QP_PORTABLE_MODE=1
 export QP_MODELS_DIR="$USB_ROOT/models"
 
 # --- Ensure directories exist ---
-mkdir -p "$QWENPAW_WORKING_DIR" "$QP_MODELS_DIR"
+mkdir -p "$QWENPAW_WORKING_DIR" "$QWENPAW_SECRET_DIR" "$QWENPAW_BACKUP_DIR"
+mkdir -p "$PIP_CACHE_DIR" "$UV_CACHE_DIR" "$MODELSCOPE_CACHE" "$HUGGINGFACE_HUB_CACHE"
+mkdir -p "$QP_MODELS_DIR"
 
 # --- Check if QwenPaw workspace is initialized ---
 if [ ! -f "$QWENPAW_WORKING_DIR/config.json" ]; then

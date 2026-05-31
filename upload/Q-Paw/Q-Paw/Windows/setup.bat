@@ -270,9 +270,24 @@ echo  [6/6] Initializing QwenPaw workspace...
 
 set "QWENPAW_WORKING_DIR=%USB_ROOT%\data"
 set "QWENPAW_SECRET_DIR=%USB_ROOT%\data\.secret"
+set "QWENPAW_BACKUP_DIR=%USB_ROOT%\data\.backups"
 set "PYTHONHOME=%USB_ROOT%\python"
 set "PYTHONPATH=%USB_ROOT%\python\Lib;%USB_ROOT%\python\Lib\site-packages"
 set "PATH=%USB_ROOT%\python;%USB_ROOT%\python\Scripts;%USB_ROOT%\bin;%PATH%"
+
+REM Redirect caches to USB (no traces on host PC)
+set "PIP_CACHE_DIR=%USB_ROOT%\cache\pip"
+set "UV_CACHE_DIR=%USB_ROOT%\cache\uv"
+set "MODELSCOPE_CACHE=%USB_ROOT%\cache\modelscope"
+set "HUGGINGFACE_HUB_CACHE=%USB_ROOT%\cache\huggingface"
+
+mkdir "%QWENPAW_WORKING_DIR%" 2>nul
+mkdir "%QWENPAW_SECRET_DIR%" 2>nul
+mkdir "%QWENPAW_BACKUP_DIR%" 2>nul
+mkdir "%PIP_CACHE_DIR%" 2>nul
+mkdir "%UV_CACHE_DIR%" 2>nul
+mkdir "%MODELSCOPE_CACHE%" 2>nul
+mkdir "%HUGGINGFACE_HUB_CACHE%" 2>nul
 
 if exist "%QWENPAW_WORKING_DIR%\config.json" goto :INIT_DONE
 
