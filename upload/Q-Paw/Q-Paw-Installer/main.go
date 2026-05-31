@@ -294,35 +294,15 @@ func runMigrate(usbRoot string) {
 func editConfig(usbRoot string) {
         fmt.Println("\n  ═══ ⚙️  配置 ═══")
         fmt.Println()
+        fmt.Println("  启动交互式配置编辑器...")
+        fmt.Println("  (可直接修改 QwenPaw 的 config.json 和提供商配置)")
+        fmt.Println()
 
-        envPath := filepath.Join(usbRoot, "config", "portable.env")
-        if !fileExists(envPath) {
-                fmt.Println("  配置文件不存在，将创建默认配置...")
-                os.MkdirAll(filepath.Join(usbRoot, "config"), 0755)
-                content := "# Q-Paw 便携模式配置\nQP_PORTABLE_MODE=1\nQP_MODEL_MODE=online\nQP_TOOL_GUARD=1\nQP_FILE_GUARD=1\nQP_SKILL_SCAN=1\n"
-                os.WriteFile(envPath, []byte(content), 0644)
+        script := filepath.Join(usbRoot, "Windows", "configure.bat")
+        if !fileExists(script) {
+                script = filepath.Join(usbRoot, "configure.bat")
         }
-
-        for {
-                fmt.Println("  配置项:")
-                fmt.Println("    " + colorBold + "[1]" + colorReset + " 切换运行模式 (在线/离线)")
-                fmt.Println("    " + colorBold + "[2]" + colorReset + " 配置 API Key")
-                fmt.Println("    " + colorBold + "[3]" + colorReset + " 查看当前配置")
-                fmt.Println("    " + colorDim + "[0] 返回" + colorReset)
-                fmt.Println()
-
-                choice := readInput("  请选择 > ")
-                switch strings.TrimSpace(choice) {
-                case "1":
-                        switchMode(envPath)
-                case "2":
-                        configAPI(usbRoot, envPath)
-                case "3":
-                        showConfig(envPath)
-                case "0":
-                        return
-                }
-        }
+        runBatch(script)
 }
 
 func switchMode(envPath string) {
