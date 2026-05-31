@@ -25,8 +25,10 @@ desktop.ini
 *.bak
 *.bak.*
 
-# --- Installer build artifacts ---
-installer/QPaw.exe
+# --- Compiled binaries (distribute via GitHub Releases) ---
+QPaw.exe
+bin/uv.exe
+bin/uvx.exe
 
 # --- IDE ---
 .vscode/
