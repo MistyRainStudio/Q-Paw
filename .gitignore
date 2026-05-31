@@ -1,5 +1,5 @@
 # === Q-Paw .gitignore ===
-# Only track source/config files, exclude runtime-generated content
+# Only track Q-Paw project source/config files
 
 # --- Runtime directories (created by setup) ---
 python/
@@ -10,8 +10,19 @@ logs/
 models/
 cache/
 
+# --- Non-project directories ---
+skills/
+upload/
+download/
+
 # --- Runtime-generated files ---
 config/portable.env
+.env
+
+# --- Compiled binaries (distribute via GitHub Releases) ---
+QPaw.exe
+bin/uv.exe
+bin/uvx.exe
 
 # --- OS files ---
 .DS_Store
@@ -25,10 +36,9 @@ desktop.ini
 *.bak
 *.bak.*
 
-# --- Compiled binaries (distribute via GitHub Releases) ---
-QPaw.exe
-bin/uv.exe
-bin/uvx.exe
+# --- Python cache ---
+__pycache__/
+*.pyc
 
 # --- IDE ---
 .vscode/
