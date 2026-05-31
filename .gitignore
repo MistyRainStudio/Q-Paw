@@ -19,10 +19,8 @@ download/
 config/portable.env
 .env
 
-# --- Compiled binaries (distribute via GitHub Releases) ---
-QPaw.exe
-bin/uv.exe
-bin/uvx.exe
+# --- Installer build artifacts (keep QPaw.exe, uv.exe, uvx.exe in repo) ---
+installer/QPaw.exe
 
 # --- OS files ---
 .DS_Store
