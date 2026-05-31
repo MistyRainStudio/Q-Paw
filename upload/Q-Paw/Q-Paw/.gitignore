@@ -1,0 +1,33 @@
+# === Q-Paw .gitignore ===
+# Only track source/config files, exclude runtime-generated content
+
+# --- Runtime directories (created by setup) ---
+python/
+python-macos/
+python-linux/
+data/
+logs/
+models/
+cache/
+
+# --- Runtime-generated files ---
+config/portable.env
+
+# --- OS files ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# --- Backup files ---
+*.bak
+*.bak.*
+
+# --- Installer build artifacts ---
+installer/QPaw.exe
+
+# --- IDE ---
+.vscode/
+.idea/
