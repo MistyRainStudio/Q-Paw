@@ -14,6 +14,27 @@
 
 </div>
 
+## 📸 截图预览
+
+<table>
+  <tr>
+    <td align="center"><b>QPaw.exe 主菜单</b></td>
+    <td align="center"><b>安装过程</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/qpaw-menu.png" alt="QPaw.exe 主菜单" width="400"/></td>
+    <td><img src="docs/images/qpaw-setup.png" alt="安装过程" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>配置编辑器</b></td>
+    <td align="center"><b>QwenPaw WebUI</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/qpaw-config.png" alt="配置编辑器" width="400"/></td>
+    <td><img src="docs/images/qwenpaw-webui.png" alt="QwenPaw WebUI" width="400"/></td>
+  </tr>
+</table>
+
 ---
 
 ## ✨ Q-Paw 是什么？
@@ -76,6 +97,8 @@ chmod +x setup.sh && ./setup.sh     # 安装环境
 ## 📦 安装过程详解
 
 运行安装（`QPaw.exe → [1]` 或 `setup.bat` / `setup.sh`）时，脚本会自动执行以下 6 个步骤：
+
+<img src="docs/images/qpaw-setup.png" alt="安装过程" width="560"/>
 
 ### 步骤 1：安装 uv 包管理器
 
@@ -214,37 +237,29 @@ Q-Paw/                          ← U盘根目录
 
 `QPaw.exe` 是用 Go 编写的轻量级菜单程序（仅 755KB），提供 7 大功能：
 
-```
-╔═══════════════════════════════════════════╗
-║            Q-Paw 便携助手 v2.0            ║
-║        QwenPaw U盘启动器 - 即插即用       ║
-╚═══════════════════════════════════════════╝
-
-┌─ 系统状态 ────────────────────────────────┐
-│  Python:  已安装           uv: 已安装       │
-│  QwenPaw: 已安装           模型: 0          │
-│  工作区:  已初始化                           │
-│  运行模式: 在线                              │
-└──────────────────────────────────────────┘
-
-[1] 📥 安装环境      首次使用必选 (安装 + 初始化工作区)
-[2] 🚀 启动 QwenPaw  在线/离线模式启动
-[3] 📦 模型管理      下载/导入/删除本地模型
-[4] 🔄 更新          更新 QwenPaw + modelscope + uv
-[5] 🔀 数据迁移      从旧版 Q-Paw 合并数据
-[6] ⚙️  配置          编辑 API Key / 运行模式等
-[7] 🧹 清理          清理缓存和临时文件
-
-[0] 退出
-```
+<img src="docs/images/qpaw-menu.png" alt="QPaw.exe 主菜单" width="560"/>
 
 启动时会自动检测 Python、uv、QwenPaw 的安装状态和工作区初始化状态，帮助用户了解当前环境情况。
+
+菜单提供以下选项：
+
+| 选项 | 功能 | 说明 |
+|------|------|------|
+| `[1]` | 📥 安装环境 | 首次使用必选 (安装 + 初始化工作区) |
+| `[2]` | 🚀 启动 QwenPaw | 在线/离线模式启动 |
+| `[3]` | 📦 模型管理 | 下载/导入/删除本地模型 |
+| `[4]` | 🔄 更新 | 更新 QwenPaw + modelscope + uv |
+| `[5]` | 🔀 数据迁移 | 从旧版 Q-Paw 合并数据 |
+| `[6]` | ⚙️ 配置 | 编辑 API Key / 运行模式等 |
+| `[7]` | 🧹 清理 | 清理缓存和临时文件 |
 
 ---
 
 ## ⚙️ 交互式配置编辑器
 
 Q-Paw 内置了功能丰富的交互式配置编辑器（`scripts/qpaw-config.py`），可直接修改 QwenPaw 的 JSON 配置文件，无需手动编辑。
+
+<img src="docs/images/qpaw-config.png" alt="配置编辑器" width="560"/>
 
 ### 启动方式
 
@@ -314,6 +329,8 @@ Q-Paw 内置了功能丰富的交互式配置编辑器（`scripts/qpaw-config.py
 ### 在线模式（默认）
 
 通过云端 API 使用 AI，无需下载任何模型。只需网络 + API Key 即可。
+
+<img src="docs/images/qwenpaw-webui.png" alt="QwenPaw WebUI" width="560"/>
 
 推荐的 API 提供商：
 

@@ -14,6 +14,27 @@ English | [中文](README_zh.md)
 
 </div>
 
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td align="center"><b>QPaw.exe Main Menu</b></td>
+    <td align="center"><b>Setup Process</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/qpaw-menu.png" alt="QPaw.exe Main Menu" width="400"/></td>
+    <td><img src="docs/images/qpaw-setup.png" alt="Setup Process" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Config Editor</b></td>
+    <td align="center"><b>QwenPaw WebUI</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/qpaw-config.png" alt="Config Editor" width="400"/></td>
+    <td><img src="docs/images/qwenpaw-webui.png" alt="QwenPaw WebUI" width="400"/></td>
+  </tr>
+</table>
+
 ---
 
 ## ✨ What is Q-Paw?
@@ -76,6 +97,8 @@ If you prefer not to use `QPaw.exe`, you can directly double-click scripts in th
 ## 📦 Installation Process Explained
 
 When you run setup (`QPaw.exe → [1]` or `setup.bat` / `setup.sh`), the script automatically performs these 6 steps:
+
+<img src="docs/images/qpaw-setup.png" alt="Setup Process" width="560"/>
 
 ### Step 1: Install uv Package Manager
 
@@ -214,37 +237,29 @@ Q-Paw/                          ← USB Root
 
 `QPaw.exe` is a lightweight menu program written in Go (only 755KB), providing 7 major functions:
 
-```
-╔═══════════════════════════════════════════╗
-║            Q-Paw 便携助手 v2.0            ║
-║        QwenPaw U盘启动器 - 即插即用       ║
-╚═══════════════════════════════════════════╝
-
-┌─ 系统状态 ────────────────────────────────┐
-│  Python:  Installed        uv: Installed    │
-│  QwenPaw: Installed        Models: 0        │
-│  Workspace: Initialized                     │
-│  Running Mode: Online                       │
-└──────────────────────────────────────────┘
-
-[1] 📥 Install      First-time setup (install + init workspace)
-[2] 🚀 Launch       Start QwenPaw (online/offline mode)
-[3] 📦 Models       Download/import/delete local models
-[4] 🔄 Update       Update QwenPaw + modelscope + uv
-[5] 🔀 Migrate      Merge data from old Q-Paw
-[6] ⚙️  Configure    Edit API Key / running mode / etc.
-[7] 🧹 Cleanup      Clean caches and temp files
-
-[0] Exit
-```
+<img src="docs/images/qpaw-menu.png" alt="QPaw.exe Main Menu" width="560"/>
 
 On startup, it automatically checks the installation status of Python, uv, QwenPaw, and workspace initialization.
+
+The menu provides the following options:
+
+| Option | Function | Description |
+|--------|----------|-------------|
+| `[1]` | 📥 Install | First-time setup (install + init workspace) |
+| `[2]` | 🚀 Launch | Start QwenPaw (online/offline mode) |
+| `[3]` | 📦 Models | Download/import/delete local models |
+| `[4]` | 🔄 Update | Update QwenPaw + modelscope + uv |
+| `[5]` | 🔀 Migrate | Merge data from old Q-Paw |
+| `[6]` | ⚙️ Configure | Edit API Key / running mode / etc. |
+| `[7]` | 🧹 Cleanup | Clean caches and temp files |
 
 ---
 
 ## ⚙️ Interactive Configuration Editor
 
 Q-Paw includes a powerful interactive configuration editor (`scripts/qpaw-config.py`) that directly modifies QwenPaw's JSON configuration files — no manual editing required.
+
+<img src="docs/images/qpaw-config.png" alt="Config Editor" width="560"/>
 
 ### How to Launch
 
@@ -314,6 +329,8 @@ Directly edit `config.json`, `active_model.json`, or provider config files. Auto
 ### Online Mode (Default)
 
 Use AI through cloud APIs — no model download required. Only need network + API Key.
+
+<img src="docs/images/qwenpaw-webui.png" alt="QwenPaw WebUI" width="560"/>
 
 Recommended API providers:
 
