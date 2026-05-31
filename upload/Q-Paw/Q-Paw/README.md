@@ -90,6 +90,7 @@ If you prefer not to use `QPaw.exe`, you can directly double-click scripts in th
 | `model-manager.bat` | Model management (download/import/delete) |
 | `update.bat` | Update QwenPaw + modelscope + uv |
 | `migrate.bat` | Migrate data from an old Q-Paw |
+| `skill-deps.bat` | One-click install skill Python dependencies |
 | `cleanup.bat` | Clean caches and temp files |
 
 ---
@@ -179,6 +180,7 @@ Q-Paw/                          ← USB Root
 │   ├── model-manager.bat       #   Model management (download/import/delete/switch mode)
 │   ├── update.bat              #   Update (uv + QwenPaw + modelscope)
 │   ├── migrate.bat             #   Data migration (merge from old version)
+│   ├── skill-deps.bat          #   One-click install skill Python dependencies
 │   └── cleanup.bat             #   Clean caches and temp files
 │
 ├── macOS_Linux/                # macOS / Linux scripts
@@ -188,6 +190,7 @@ Q-Paw/                          ← USB Root
 │   ├── model-manager.sh        #   Model management
 │   ├── update.sh               #   Update
 │   ├── migrate.sh              #   Data migration
+│   ├── skill-deps.sh           #   One-click install skill Python dependencies
 │   └── cleanup.sh              #   Clean caches
 │
 ├── bin/                        # Binary tools
@@ -251,7 +254,8 @@ The menu provides the following options:
 | `[4]` | 🔄 Update | Update QwenPaw + modelscope + uv |
 | `[5]` | 🔀 Migrate | Merge data from old Q-Paw |
 | `[6]` | ⚙️ Configure | Edit API Key / running mode / etc. |
-| `[7]` | 🧹 Cleanup | Clean caches and temp files |
+| `[7]` | 📚 Skill Deps | One-click install skill Python dependencies |
+| `[8]` | 🧹 Cleanup | Clean caches and temp files |
 
 ---
 
@@ -429,6 +433,45 @@ When upgrading to a new version of Q-Paw, use the migration tool to merge data f
 - **Config Merge** — Smart merge of `portable.env`; keeps new defaults + old user customizations
 
 Supports "merge all" or "custom selection" of what to migrate.
+
+---
+
+## 📚 Skill Dependencies
+
+QwenPaw includes 17 default skills (in both Chinese and English). Most of them work out of the box without extra packages, but **4 document skills** require additional Python dependencies:
+
+| Skill | Extra Python Packages | System Tools (Optional) |
+|-------|----------------------|------------------------|
+| **PDF** | `pypdf`, `pdfplumber`, `reportlab`, `pdf2image` | poppler-utils (pdftotext/pdftoppm), qpdf |
+| **DOCX** | `defusedxml`, `lxml` | LibreOffice, pandoc, npm+docx |
+| **PPTX** | `markitdown[pptx]` | LibreOffice, poppler-utils, npm+pptxgenjs |
+| **XLSX** | `openpyxl`, `pandas` | LibreOffice |
+
+The other 13 skills (browser, QA, cron, chat, file_reader, guidance, make-skill, make_plan, multi_agent, news, dingtalk, channel_message, himalaya) have no extra pip dependencies.
+
+### One-Click Install
+
+**Windows**: `QPaw.exe → [7] Skill Deps` or double-click `Windows\skill-deps.bat`
+
+**macOS/Linux**: `./macOS_Linux/skill-deps.sh`
+
+The script automatically:
+- Uses **uv** (preferred, 10-100x faster) or falls back to **pip**
+- Tries **4 mirror sources** in order (Aliyun → Tsinghua → Huawei → Official)
+- **Skips** packages that are already installed
+- Checks for **system tools** (LibreOffice, poppler, etc.) and shows installation hints
+
+### System Tools Installation (Optional)
+
+For full document skill support, install these on the host OS:
+
+| OS | Command |
+|----|---------|
+| **Ubuntu/Debian** | `sudo apt install poppler-utils qpdf pandoc libreoffice` |
+| **macOS** | `brew install poppler qpdf pandoc libreoffice` |
+| **Windows** | Download from each project's website, or use `winget install` |
+
+> System tools are NOT installed on the USB — they run on the host PC. They are optional; skills will still work for basic operations without them, but some advanced features (PDF text extraction, document conversion, etc.) require them.
 
 ---
 
