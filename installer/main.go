@@ -66,6 +66,8 @@ func main() {
                 case "6":
                         editConfig(usbRoot)
                 case "7":
+                        runSkillDeps(usbRoot)
+                case "8":
                         runCleanup(usbRoot)
                 case "0", "q", "Q":
                         clearScreen()
@@ -225,7 +227,8 @@ func showMenu() {
         fmt.Println("  " + colorBold + "[4]" + colorReset + " 🔄 更新          " + colorGray + "更新 QwenPaw + modelscope + uv" + colorReset)
         fmt.Println("  " + colorBold + "[5]" + colorReset + " 🔀 数据迁移      " + colorGray + "从旧版 Q-Paw 合并数据" + colorReset)
         fmt.Println("  " + colorBold + "[6]" + colorReset + " ⚙️  配置          " + colorGray + "编辑 API Key / 运行模式等" + colorReset)
-        fmt.Println("  " + colorBold + "[7]" + colorReset + " 🧹 清理          " + colorGray + "清理缓存和临时文件" + colorReset)
+        fmt.Println("  " + colorBold + "[7]" + colorReset + " 📚 技能依赖      " + colorGray + "一键补齐默认技能的 Python 依赖" + colorReset)
+        fmt.Println("  " + colorBold + "[8]" + colorReset + " 🧹 清理          " + colorGray + "清理缓存和临时文件" + colorReset)
         fmt.Println()
         fmt.Println("  " + colorDim + "[0] 退出" + colorReset)
 }
@@ -402,6 +405,16 @@ func showConfig(envPath string) {
         }
         fmt.Println("  " + colorDim + "└──────────────────────────────────────────┘" + colorReset)
         readInput("\n  按回车继续...")
+}
+
+func runSkillDeps(usbRoot string) {
+        fmt.Println("\n  ═══ 📚 技能依赖 ═══")
+        fmt.Println()
+        script := filepath.Join(usbRoot, "Windows", "skill-deps.bat")
+        if !fileExists(script) {
+                script = filepath.Join(usbRoot, "skill-deps.bat")
+        }
+        runBatch(script)
 }
 
 func runCleanup(usbRoot string) {

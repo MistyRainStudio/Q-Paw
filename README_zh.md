@@ -90,6 +90,7 @@ chmod +x setup.sh && ./setup.sh     # 安装环境
 | `model-manager.bat` | 模型管理（下载/导入/删除） |
 | `update.bat` | 更新 QwenPaw + modelscope + uv |
 | `migrate.bat` | 从旧版 Q-Paw 迁移数据 |
+| `skill-deps.bat` | 一键补齐技能 Python 依赖 |
 | `cleanup.bat` | 清理缓存和临时文件 |
 
 ---
@@ -179,6 +180,7 @@ Q-Paw/                          ← U盘根目录
 │   ├── model-manager.bat       #   模型管理（下载/导入/删除/切换模式）
 │   ├── update.bat              #   更新（uv + QwenPaw + modelscope）
 │   ├── migrate.bat             #   数据迁移（从旧版合并）
+│   ├── skill-deps.bat          #   一键补齐技能 Python 依赖
 │   └── cleanup.bat             #   清理缓存和临时文件
 │
 ├── macOS_Linux/                # macOS / Linux 脚本
@@ -188,6 +190,7 @@ Q-Paw/                          ← U盘根目录
 │   ├── model-manager.sh        #   模型管理
 │   ├── update.sh               #   更新
 │   ├── migrate.sh              #   数据迁移
+│   ├── skill-deps.sh           #   一键补齐技能 Python 依赖
 │   └── cleanup.sh              #   清理缓存
 │
 ├── bin/                        # 二进制工具
@@ -251,7 +254,8 @@ Q-Paw/                          ← U盘根目录
 | `[4]` | 🔄 更新 | 更新 QwenPaw + modelscope + uv |
 | `[5]` | 🔀 数据迁移 | 从旧版 Q-Paw 合并数据 |
 | `[6]` | ⚙️ 配置 | 编辑 API Key / 运行模式等 |
-| `[7]` | 🧹 清理 | 清理缓存和临时文件 |
+| `[7]` | 📚 技能依赖 | 一键补齐默认技能的 Python 依赖 |
+| `[8]` | 🧹 清理 | 清理缓存和临时文件 |
 
 ---
 
@@ -429,6 +433,45 @@ QP_API_KEY=sk-your-api-key-here
 - **配置合并** — 智能合并 `portable.env`，保留新版的默认值 + 旧版的用户自定义值
 
 支持选择"全部合并"或"自定义选择"要迁移的内容。
+
+---
+
+## 📚 技能依赖
+
+QwenPaw 包含 17 个默认技能（中英文各一套），大部分开箱即用无需额外安装包，但 **4 个文档技能** 需要额外的 Python 依赖：
+
+| 技能 | 额外 Python 包 | 系统工具（可选） |
+|------|---------------|-----------------|
+| **PDF** | `pypdf`, `pdfplumber`, `reportlab`, `pdf2image` | poppler-utils (pdftotext/pdftoppm), qpdf |
+| **DOCX** | `defusedxml`, `lxml` | LibreOffice, pandoc, npm+docx |
+| **PPTX** | `markitdown[pptx]` | LibreOffice, poppler-utils, npm+pptxgenjs |
+| **XLSX** | `openpyxl`, `pandas` | LibreOffice |
+
+其余 13 个技能（浏览器、问答、定时任务、聊天、文件读取、指引、制作技能、计划、多智能体、新闻、钉钉、渠道消息、himalaya）无需额外 pip 依赖。
+
+### 一键安装
+
+**Windows**：`QPaw.exe → [7] 技能依赖` 或双击 `Windows\skill-deps.bat`
+
+**macOS/Linux**：`./macOS_Linux/skill-deps.sh`
+
+脚本会自动：
+- 优先使用 **uv**（快 10-100 倍），不可用时回退到 **pip**
+- 依次尝试 **4 个镜像源**（阿里云 → 清华 → 华为 → 官方）
+- **跳过**已安装的包，只安装缺失的
+- 检测 **系统工具**（LibreOffice、poppler 等）并给出安装提示
+
+### 系统工具安装（可选）
+
+如需完整的文档技能支持，请在宿主机上安装以下工具：
+
+| 操作系统 | 命令 |
+|---------|------|
+| **Ubuntu/Debian** | `sudo apt install poppler-utils qpdf pandoc libreoffice` |
+| **macOS** | `brew install poppler qpdf pandoc libreoffice` |
+| **Windows** | 从各项目官网下载，或使用 `winget install` |
+
+> 系统工具不会安装到U盘上——它们在宿主机上运行。它们是可选的；没有它们技能仍可进行基本操作，但部分高级功能（PDF 文本提取、文档格式转换等）需要它们。
 
 ---
 
