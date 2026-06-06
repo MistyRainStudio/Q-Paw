@@ -1,7 +1,8 @@
 @echo off
 :: Q-Paw Update Script for Windows
-:: Updates QwenPaw, modelscope, and uv to latest versions
-:: Uses uv (default) + pip (fallback) with Chinese mirrors
+:: Updates QwenPaw and modelscope using existing uv or pip
+:: uv is NOT updated — keep the bundled version stable
+:: Uses Chinese mirrors for faster downloads
 
 set "USB_ROOT=%~dp0.."
 if "%USB_ROOT:~-1%"=="\" set "USB_ROOT=%USB_ROOT:~0,-1%"
@@ -26,52 +27,21 @@ set "QWENPAW_WORKING_DIR=%USB_ROOT%\data"
 set "QP_PORTABLE_MODE=1"
 set "QP_MODELS_DIR=%USB_ROOT%\models"
 
-:: Detect package manager
+:: Detect package manager (use bundled uv, don't update it)
 set "UV_EXE=%USB_ROOT%\bin\uv.exe"
 set "PKG_CMD=pip"
-if exist "%UV_EXE%" set "PKG_CMD=uv"
-
+if exist "%UV_EXE%" (
+    set "PKG_CMD=uv"
+    echo  uv detected:
+    "%UV_EXE%" --version
+) else (
+    echo  uv not found, using pip.
+)
 echo  Package manager: %PKG_CMD%
 echo.
 
-:: --- Step 1: Update uv ---
-echo  [1/3] Updating uv package manager...
-if not exist "%UV_EXE%" goto :SKIP_UV_UPDATE
-
-echo  Checking current uv version:
-"%UV_EXE%" --version
-echo.
-
-REM Delete old uv and re-download
-set "UV_ZIP=%USB_ROOT%\uv-update.zip"
-echo  Downloading latest uv from NPMMirror...
-curl -L -o "%UV_ZIP%" "https://registry.npmmirror.com/-/binary/uv/0.6.6/uv-x86_64-pc-windows-msvc.zip" --connect-timeout 10 -s -f
-if not exist "%UV_ZIP%" curl -L -o "%UV_ZIP%" "https://github.com/astral-sh/uv/releases/download/0.6.6/uv-x86_64-pc-windows-msvc.zip" --connect-timeout 15
-
-if exist "%UV_ZIP%" (
-    for %%A in ("%UV_ZIP%") do set "UV_SIZE=%%~zA"
-    if !UV_SIZE! LSS 5000000 (
-        echo  [WARN] Downloaded file too small, skipping uv update.
-        del "%UV_ZIP%" 2>nul
-    ) else (
-        echo  Extracting uv...
-        del "%UV_EXE%" 2>nul
-        powershell -Command "Expand-Archive -Path '%UV_ZIP%' -DestinationPath '%USB_ROOT%\bin' -Force"
-        del "%UV_ZIP%" 2>nul
-        if exist "%UV_EXE%" (
-            echo  OK - uv updated.
-            "%UV_EXE%" --version
-        ) else (
-            echo  [WARN] uv update failed, keeping old version.
-        )
-    )
-)
-
-:SKIP_UV_UPDATE
-echo.
-
-:: --- Step 2: Update QwenPaw ---
-echo  [2/3] Updating QwenPaw...
+:: --- Step 1: Update QwenPaw ---
+echo  [1/2] Updating QwenPaw...
 
 echo  Current version:
 "%USB_ROOT%\python\python.exe" -c "import importlib.metadata; print(importlib.metadata.version('qwenpaw'))" 2>nul || echo  (not installed)
@@ -121,8 +91,8 @@ echo  New version:
 echo  OK - QwenPaw updated.
 echo.
 
-:: --- Step 3: Update modelscope ---
-echo  [3/3] Updating modelscope...
+:: --- Step 2: Update modelscope ---
+echo  [2/2] Updating modelscope...
 
 if not "%PKG_CMD%"=="uv" goto :UPDATE_MS_PIP
 

@@ -1,7 +1,8 @@
 #!/bin/bash
 # ============================================
 #  Q-Paw Update Script (macOS / Linux)
-#  Updates QwenPaw, modelscope, and uv
+#  Updates QwenPaw and modelscope
+#  uv is NOT updated — keep the bundled version stable
 #  Package manager: uv (default) + pip (fallback)
 #  Mirrors: China-first
 # ============================================
@@ -53,82 +54,21 @@ export QWENPAW_WORKING_DIR="$USB_ROOT/data"
 export QP_PORTABLE_MODE=1
 export QP_MODELS_DIR="$USB_ROOT/models"
 
+# Detect package manager (use existing uv, don't update it)
 UV_BIN="$USB_ROOT/bin/uv"
 PKG_CMD="pip"
 if [ -f "$UV_BIN" ]; then
     PKG_CMD="uv"
+    echo -e " uv detected:"
+    "$UV_BIN" --version
+else
+    echo -e " ${YELLOW}uv not found, using pip.${NC}"
 fi
-
 echo -e " Package manager: ${GREEN}${PKG_CMD}${NC}"
 echo ""
 
-# --- Step 1: Update uv ---
-echo -e " [1/3] Updating uv package manager..."
-
-if [ -f "$UV_BIN" ]; then
-    echo " Current uv version:"
-    "$UV_BIN" --version
-    echo ""
-
-    # Determine uv binary URL
-    if [ "$OS_NAME" = "Darwin" ]; then
-        if [ "$ARCH" = "arm64" ]; then
-            UV_URL_MIRROR="https://registry.npmmirror.com/-/binary/uv/0.6.6/uv-aarch64-apple-darwin.tar.gz"
-            UV_URL_GH="https://github.com/astral-sh/uv/releases/download/0.6.6/uv-aarch64-apple-darwin.tar.gz"
-        else
-            UV_URL_MIRROR="https://registry.npmmirror.com/-/binary/uv/0.6.6/uv-x86_64-apple-darwin.tar.gz"
-            UV_URL_GH="https://github.com/astral-sh/uv/releases/download/0.6.6/uv-x86_64-apple-darwin.tar.gz"
-        fi
-    else
-        UV_URL_MIRROR="https://registry.npmmirror.com/-/binary/uv/0.6.6/uv-x86_64-unknown-linux-gnu.tar.gz"
-        UV_URL_GH="https://github.com/astral-sh/uv/releases/download/0.6.6/uv-x86_64-unknown-linux-gnu.tar.gz"
-    fi
-
-    echo " Downloading latest uv..."
-    rm -f "$UV_BIN"
-
-    if curl -L -o /tmp/uv-update.tar.gz "$UV_URL_MIRROR" --connect-timeout 10 -s -f; then
-        tar xzf /tmp/uv-update.tar.gz -C "$USB_ROOT/bin/" --strip-components=1 2>/dev/null || true
-        if [ ! -f "$UV_BIN" ]; then
-            tar xzf /tmp/uv-update.tar.gz -C /tmp/ 2>/dev/null
-            UV_EXTRACTED=$(find /tmp -name "uv" -type f -path "*/uv-*" 2>/dev/null | head -1)
-            if [ -n "$UV_EXTRACTED" ]; then
-                mv "$UV_EXTRACTED" "$UV_BIN"
-            fi
-        fi
-        rm -f /tmp/uv-update.tar.gz
-    fi
-
-    if [ ! -f "$UV_BIN" ]; then
-        echo " NPMMirror failed, trying GitHub..."
-        if curl -L -o /tmp/uv-update.tar.gz "$UV_URL_GH" --connect-timeout 15; then
-            tar xzf /tmp/uv-update.tar.gz -C "$USB_ROOT/bin/" --strip-components=1 2>/dev/null || true
-            if [ ! -f "$UV_BIN" ]; then
-                tar xzf /tmp/uv-update.tar.gz -C /tmp/ 2>/dev/null
-                UV_EXTRACTED=$(find /tmp -name "uv" -type f -path "*/uv-*" 2>/dev/null | head -1)
-                if [ -n "$UV_EXTRACTED" ]; then
-                    mv "$UV_EXTRACTED" "$UV_BIN"
-                fi
-            fi
-            rm -f /tmp/uv-update.tar.gz
-        fi
-    fi
-
-    if [ -f "$UV_BIN" ]; then
-        chmod +x "$UV_BIN"
-        echo -e " ${GREEN}OK - uv updated.${NC}"
-        "$UV_BIN" --version
-    else
-        echo -e " ${YELLOW}[WARN] uv update failed, will use pip.${NC}"
-        PKG_CMD="pip"
-    fi
-else
-    echo -e " ${YELLOW}uv not installed, skipping uv update.${NC}"
-fi
-echo ""
-
-# --- Step 2: Update QwenPaw ---
-echo -e " [2/3] Updating QwenPaw..."
+# --- Step 1: Update QwenPaw ---
+echo -e " [1/2] Updating QwenPaw..."
 
 echo " Current version:"
 "$PYTHON_BIN" -c "import importlib.metadata; print(importlib.metadata.version('qwenpaw'))" 2>/dev/null || echo "  (not installed)"
@@ -176,8 +116,8 @@ else
 fi
 echo ""
 
-# --- Step 3: Update modelscope ---
-echo -e " [3/3] Updating modelscope..."
+# --- Step 2: Update modelscope ---
+echo -e " [2/2] Updating modelscope..."
 
 MS_UPDATED=false
 
