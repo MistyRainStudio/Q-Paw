@@ -71,6 +71,19 @@ mkdir -p "$QWENPAW_WORKING_DIR" "$QWENPAW_SECRET_DIR" "$QWENPAW_BACKUP_DIR"
 mkdir -p "$PIP_CACHE_DIR" "$UV_CACHE_DIR" "$MODELSCOPE_CACHE" "$HUGGINGFACE_HUB_CACHE"
 mkdir -p "$QP_MODELS_DIR"
 
+# --- Ensure pip is available (AI may call pip directly) ---
+"$PYTHON_BIN" -m pip --version >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo -e " ${YELLOW}[INFO] pip not found, installing...${NC}"
+    curl -L -o /tmp/get-pip.py "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/source/p/pip/pip-24.0-py3-none-any.whl" --connect-timeout 10 -s 2>/dev/null
+    if [ ! -f /tmp/get-pip.py ]; then
+        curl -L -o /tmp/get-pip.py "https://bootstrap.pypa.io/get-pip.py" --connect-timeout 15
+    fi
+    "$PYTHON_BIN" /tmp/get-pip.py --no-warn-script-location -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+    rm -f /tmp/get-pip.py
+    echo -e " ${GREEN}pip installed.${NC}"
+fi
+
 # --- Check if QwenPaw workspace is initialized ---
 if [ ! -f "$QWENPAW_WORKING_DIR/config.json" ]; then
     echo ""
