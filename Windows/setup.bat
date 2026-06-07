@@ -120,12 +120,20 @@ echo import site>> "%USB_ROOT%\python\python311._pth"
 mkdir "%USB_ROOT%\python\Lib" 2>nul
 mkdir "%USB_ROOT%\python\Lib\site-packages" 2>nul
 
-REM Install pip from mirror
-echo  Installing pip (Tsinghua mirror)...
-curl -L -o "%USB_ROOT%\python\get-pip.py" "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/source/p/pip/pip-24.0-py3-none-any.whl" --connect-timeout 10 -s 2>nul
-if not exist "%USB_ROOT%\python\get-pip.py" curl -L -o "%USB_ROOT%\python\get-pip.py" "https://bootstrap.pypa.io/get-pip.py"
-"%USB_ROOT%\python\python.exe" "%USB_ROOT%\python\get-pip.py" --no-warn-script-location -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
-del "%USB_ROOT%\python\get-pip.py" 2>nul
+REM Install pip - prefer uv (fast), fallback to get-pip.py
+echo  Installing pip...
+if defined UV_BIN if exist "%UV_BIN%" (
+    echo  Using uv to install pip (fast)...
+    "%UV_BIN%" pip install pip --python "%USB_ROOT%\python\python.exe" --index-url https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+    if %errorlevel%==0 goto :PIP_INSTALLED
+)
+echo  uv not available, using get-pip.py...
+curl -L -o "%USB_ROOT%\python\get-pip.py" "https://bootstrap.pypa.io/get-pip.py" --connect-timeout 15 -s
+if exist "%USB_ROOT%\python\get-pip.py" (
+    "%USB_ROOT%\python\python.exe" "%USB_ROOT%\python\get-pip.py" --no-warn-script-location -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+    del "%USB_ROOT%\python\get-pip.py" 2>nul
+)
+:PIP_INSTALLED
 
 echo  OK - Portable Python installed.
 goto :PY_DONE
@@ -179,7 +187,15 @@ echo  uv + Aliyun failed, trying uv + Tsinghua...
 "%UV_BIN%" pip install qwenpaw --python "%USB_ROOT%\python\python.exe" --index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/simple/ --trusted-host mirrors.tuna.tsinghua.edu.cn
 if %errorlevel%==0 goto :QP_UV_OK
 
-echo  uv + Tsinghua failed, trying uv + Huawei Cloud...
+echo  uv + Tsinghua failed, trying uv + ZJU...
+"%UV_BIN%" pip install qwenpaw --python "%USB_ROOT%\python\python.exe" --index-url https://mirrors.zju.edu.cn/pypi/simple/ --trusted-host mirrors.zju.edu.cn
+if %errorlevel%==0 goto :QP_UV_OK
+
+echo  uv + ZJU failed, trying uv + Tencent...
+"%UV_BIN%" pip install qwenpaw --python "%USB_ROOT%\python\python.exe" --index-url https://mirrors.cloud.tencent.com/pypi/simple/ --trusted-host mirrors.cloud.tencent.com
+if %errorlevel%==0 goto :QP_UV_OK
+
+echo  uv + Tencent failed, trying uv + Huawei Cloud...
 "%UV_BIN%" pip install qwenpaw --python "%USB_ROOT%\python\python.exe" --index-url https://repo.huaweicloud.com/repository/pypi/simple/ --trusted-host repo.huaweicloud.com
 if %errorlevel%==0 goto :QP_UV_OK
 
@@ -194,7 +210,7 @@ goto :QP_DONE
 REM --- Fallback to pip ---
 :TRY_PIP
 echo  Installing with pip (fallback)...
-echo  Mirror order: Aliyun -^> Tsinghua -^> Huawei -^> Official
+echo  Mirror order: Aliyun -^> Tsinghua -^> ZJU -^> Tencent -^> Huawei -^> Official
 
 "%USB_ROOT%\python\python.exe" -m pip install qwenpaw -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
 if %errorlevel%==0 goto :QP_PIP_OK
@@ -203,7 +219,15 @@ echo  Aliyun mirror failed, trying Tsinghua...
 "%USB_ROOT%\python\python.exe" -m pip install qwenpaw -i https://mirrors.tuna.tsinghua.edu.cn/pypi/simple/ --trusted-host mirrors.tuna.tsinghua.edu.cn
 if %errorlevel%==0 goto :QP_PIP_OK
 
-echo  Tsinghua failed, trying Huawei Cloud...
+echo  Tsinghua failed, trying ZJU...
+"%USB_ROOT%\python\python.exe" -m pip install qwenpaw -i https://mirrors.zju.edu.cn/pypi/simple/ --trusted-host mirrors.zju.edu.cn
+if %errorlevel%==0 goto :QP_PIP_OK
+
+echo  ZJU failed, trying Tencent...
+"%USB_ROOT%\python\python.exe" -m pip install qwenpaw -i https://mirrors.cloud.tencent.com/pypi/simple/ --trusted-host mirrors.cloud.tencent.com
+if %errorlevel%==0 goto :QP_PIP_OK
+
+echo  Tencent failed, trying Huawei Cloud...
 "%USB_ROOT%\python\python.exe" -m pip install qwenpaw -i https://repo.huaweicloud.com/repository/pypi/simple/ --trusted-host repo.huaweicloud.com
 if %errorlevel%==0 goto :QP_PIP_OK
 

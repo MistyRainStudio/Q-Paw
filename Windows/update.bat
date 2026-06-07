@@ -56,7 +56,15 @@ echo  uv + Aliyun failed, trying uv + Tsinghua...
 "%UV_EXE%" pip install --upgrade qwenpaw --python "%USB_ROOT%\python\python.exe" --index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/simple/ --trusted-host mirrors.tuna.tsinghua.edu.cn
 if %errorlevel%==0 goto :QP_UPDATED
 
-echo  uv + Tsinghua failed, trying uv + Huawei Cloud...
+echo  uv + Tsinghua failed, trying uv + ZJU...
+"%UV_EXE%" pip install --upgrade qwenpaw --python "%USB_ROOT%\python\python.exe" --index-url https://mirrors.zju.edu.cn/pypi/simple/ --trusted-host mirrors.zju.edu.cn
+if %errorlevel%==0 goto :QP_UPDATED
+
+echo  uv + ZJU failed, trying uv + Tencent...
+"%UV_EXE%" pip install --upgrade qwenpaw --python "%USB_ROOT%\python\python.exe" --index-url https://mirrors.cloud.tencent.com/pypi/simple/ --trusted-host mirrors.cloud.tencent.com
+if %errorlevel%==0 goto :QP_UPDATED
+
+echo  uv + Tencent failed, trying uv + Huawei Cloud...
 "%UV_EXE%" pip install --upgrade qwenpaw --python "%USB_ROOT%\python\python.exe" --index-url https://repo.huaweicloud.com/repository/pypi/simple/ --trusted-host repo.huaweicloud.com
 if %errorlevel%==0 goto :QP_UPDATED
 
@@ -72,7 +80,15 @@ echo  Aliyun mirror failed, trying Tsinghua...
 "%USB_ROOT%\python\python.exe" -m pip install --upgrade qwenpaw -i https://mirrors.tuna.tsinghua.edu.cn/pypi/simple/ --trusted-host mirrors.tuna.tsinghua.edu.cn
 if %errorlevel%==0 goto :QP_UPDATED
 
-echo  Tsinghua failed, trying Huawei Cloud...
+echo  Tsinghua failed, trying ZJU...
+"%USB_ROOT%\python\python.exe" -m pip install --upgrade qwenpaw -i https://mirrors.zju.edu.cn/pypi/simple/ --trusted-host mirrors.zju.edu.cn
+if %errorlevel%==0 goto :QP_UPDATED
+
+echo  ZJU failed, trying Tencent...
+"%USB_ROOT%\python\python.exe" -m pip install --upgrade qwenpaw -i https://mirrors.cloud.tencent.com/pypi/simple/ --trusted-host mirrors.cloud.tencent.com
+if %errorlevel%==0 goto :QP_UPDATED
+
+echo  Tencent failed, trying Huawei Cloud...
 "%USB_ROOT%\python\python.exe" -m pip install --upgrade qwenpaw -i https://repo.huaweicloud.com/repository/pypi/simple/ --trusted-host repo.huaweicloud.com
 if %errorlevel%==0 goto :QP_UPDATED
 
@@ -102,6 +118,15 @@ if %errorlevel%==0 goto :MS_UPDATED
 "%UV_EXE%" pip install --upgrade modelscope --python "%USB_ROOT%\python\python.exe" --index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/simple/ --trusted-host mirrors.tuna.tsinghua.edu.cn
 if %errorlevel%==0 goto :MS_UPDATED
 
+"%UV_EXE%" pip install --upgrade modelscope --python "%USB_ROOT%\python\python.exe" --index-url https://mirrors.zju.edu.cn/pypi/simple/ --trusted-host mirrors.zju.edu.cn
+if %errorlevel%==0 goto :MS_UPDATED
+
+"%UV_EXE%" pip install --upgrade modelscope --python "%USB_ROOT%\python\python.exe" --index-url https://mirrors.cloud.tencent.com/pypi/simple/ --trusted-host mirrors.cloud.tencent.com
+if %errorlevel%==0 goto :MS_UPDATED
+
+"%UV_EXE%" pip install --upgrade modelscope --python "%USB_ROOT%\python\python.exe" --index-url https://repo.huaweicloud.com/repository/pypi/simple/ --trusted-host repo.huaweicloud.com
+if %errorlevel%==0 goto :MS_UPDATED
+
 echo  uv failed, falling back to pip...
 
 :UPDATE_MS_PIP
@@ -109,6 +134,15 @@ echo  uv failed, falling back to pip...
 if %errorlevel%==0 goto :MS_UPDATED
 
 "%USB_ROOT%\python\python.exe" -m pip install --upgrade modelscope -i https://mirrors.tuna.tsinghua.edu.cn/pypi/simple/ --trusted-host mirrors.tuna.tsinghua.edu.cn
+if %errorlevel%==0 goto :MS_UPDATED
+
+"%USB_ROOT%\python\python.exe" -m pip install --upgrade modelscope -i https://mirrors.zju.edu.cn/pypi/simple/ --trusted-host mirrors.zju.edu.cn
+if %errorlevel%==0 goto :MS_UPDATED
+
+"%USB_ROOT%\python\python.exe" -m pip install --upgrade modelscope -i https://mirrors.cloud.tencent.com/pypi/simple/ --trusted-host mirrors.cloud.tencent.com
+if %errorlevel%==0 goto :MS_UPDATED
+
+"%USB_ROOT%\python\python.exe" -m pip install --upgrade modelscope -i https://repo.huaweicloud.com/repository/pypi/simple/ --trusted-host repo.huaweicloud.com
 if %errorlevel%==0 goto :MS_UPDATED
 
 "%USB_ROOT%\python\python.exe" -m pip install --upgrade modelscope

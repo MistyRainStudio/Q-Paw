@@ -45,12 +45,17 @@ if not exist "%QP_MODELS_DIR%" mkdir "%QP_MODELS_DIR%"
 "%PYTHONHOME%\python.exe" -m pip --version >nul 2>&1
 if %errorlevel%==0 goto :PIP_OK
 
-echo  [INFO] pip not found, installing...
-curl -L -o "%USB_ROOT%\python\get-pip.py" "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/source/p/pip/pip-24.0-py3-none-any.whl" --connect-timeout 10 -s 2>nul
-if not exist "%USB_ROOT%\python\get-pip.py" curl -L -o "%USB_ROOT%\python\get-pip.py" "https://bootstrap.pypa.io/get-pip.py"
-"%PYTHONHOME%\python.exe" "%USB_ROOT%\python\get-pip.py" --no-warn-script-location -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
-del "%USB_ROOT%\python\get-pip.py" 2>nul
-echo  pip installed.
+echo  [INFO] pip not found, installing via uv...
+if exist "%USB_ROOT%\bin\uv.exe" (
+    "%USB_ROOT%\bin\uv.exe" pip install pip --python "%PYTHONHOME%\python.exe" --index-url https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+    if %errorlevel%==0 goto :PIP_OK
+)
+echo  uv failed, trying get-pip.py from Aliyun CDN...
+curl -L -o "%USB_ROOT%\python\get-pip.py" "https://bootstrap.pypa.io/get-pip.py" --connect-timeout 15 -s
+if exist "%USB_ROOT%\python\get-pip.py" (
+    "%PYTHONHOME%\python.exe" "%USB_ROOT%\python\get-pip.py" --no-warn-script-location -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+    del "%USB_ROOT%\python\get-pip.py" 2>nul
+)
 :PIP_OK
 
 :: --- Check if QwenPaw workspace is initialized ---
