@@ -85,23 +85,22 @@ while true; do
                 1)
                     echo ""
                     echo " Downloading QwenPaw-Flash-2B from ModelScope..."
-                    "$PYTHON_BIN" -m modelscope download --model AgentScope/QwenPaw-Flash-2B --local_dir "$QP_MODELS_DIR/QwenPaw-Flash-2B" || \
-                    "$PYTHON_BIN" -c "from modelscope import snapshot_download; snapshot_download('AgentScope/QwenPaw-Flash-2B', cache_dir='$QP_MODELS_DIR/QwenPaw-Flash-2B')"
+                    "$PYTHON_BIN" -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('AgentScope/QwenPaw-Flash-2B', local_dir='$QP_MODELS_DIR/QwenPaw-Flash-2B')"
                     ;;
                 2)
                     echo ""
                     echo " Downloading Qwen2.5-7B-Instruct..."
-                    "$PYTHON_BIN" -m modelscope download --model Qwen/Qwen2.5-7B-Instruct --local_dir "$QP_MODELS_DIR/Qwen2.5-7B-Instruct"
+                    "$PYTHON_BIN" -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('Qwen/Qwen2.5-7B-Instruct', local_dir='$QP_MODELS_DIR/Qwen2.5-7B-Instruct')"
                     ;;
                 3)
                     echo ""
                     echo " Downloading Qwen2.5-3B-Instruct..."
-                    "$PYTHON_BIN" -m modelscope download --model Qwen/Qwen2.5-3B-Instruct --local_dir "$QP_MODELS_DIR/Qwen2.5-3B-Instruct"
+                    "$PYTHON_BIN" -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('Qwen/Qwen2.5-3B-Instruct', local_dir='$QP_MODELS_DIR/Qwen2.5-3B-Instruct')"
                     ;;
                 4)
                     echo ""
                     echo " Downloading Qwen2.5-1.5B-Instruct..."
-                    "$PYTHON_BIN" -m modelscope download --model Qwen/Qwen2.5-1.5B-Instruct --local_dir "$QP_MODELS_DIR/Qwen2.5-1.5B-Instruct"
+                    "$PYTHON_BIN" -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('Qwen/Qwen2.5-1.5B-Instruct', local_dir='$QP_MODELS_DIR/Qwen2.5-1.5B-Instruct')"
                     ;;
                 5)
                     echo ""
@@ -109,7 +108,7 @@ while true; do
                     read -p "  Model path: " CUSTOM_URL
                     read -p "  Local name: " CUSTOM_NAME
                     echo " Downloading $CUSTOM_NAME from ModelScope..."
-                    "$PYTHON_BIN" -m modelscope download --model "$CUSTOM_URL" --local_dir "$QP_MODELS_DIR/$CUSTOM_NAME"
+                    "$PYTHON_BIN" -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('$CUSTOM_URL', local_dir='$QP_MODELS_DIR/$CUSTOM_NAME')"
                     ;;
             esac
             echo ""

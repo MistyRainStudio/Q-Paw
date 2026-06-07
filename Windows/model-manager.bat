@@ -86,32 +86,32 @@ goto :MENU
 :DL_1
 echo.
 echo  Downloading QwenPaw-Flash-2B from ModelScope...
-"%PYTHONHOME%\python.exe" -m modelscope download --model AgentScope/QwenPaw-Flash-2B --local_dir "%QP_MODELS_DIR%\QwenPaw-Flash-2B"
-echo  Done!
+"%PYTHONHOME%\python.exe" -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('AgentScope/QwenPaw-Flash-2B', local_dir=r'%QP_MODELS_DIR%\QwenPaw-Flash-2B')"
+if %errorlevel%==0 (echo  Done!) else (echo  [ERROR] Download failed!)
 pause
 goto :MENU
 
 :DL_2
 echo.
 echo  Downloading Qwen2.5-7B-Instruct from ModelScope...
-"%PYTHONHOME%\python.exe" -m modelscope download --model Qwen/Qwen2.5-7B-Instruct --local_dir "%QP_MODELS_DIR%\Qwen2.5-7B-Instruct"
-echo  Done!
+"%PYTHONHOME%\python.exe" -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('Qwen/Qwen2.5-7B-Instruct', local_dir=r'%QP_MODELS_DIR%\Qwen2.5-7B-Instruct')"
+if %errorlevel%==0 (echo  Done!) else (echo  [ERROR] Download failed!)
 pause
 goto :MENU
 
 :DL_3
 echo.
 echo  Downloading Qwen2.5-3B-Instruct from ModelScope...
-"%PYTHONHOME%\python.exe" -m modelscope download --model Qwen/Qwen2.5-3B-Instruct --local_dir "%QP_MODELS_DIR%\Qwen2.5-3B-Instruct"
-echo  Done!
+"%PYTHONHOME%\python.exe" -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('Qwen/Qwen2.5-3B-Instruct', local_dir=r'%QP_MODELS_DIR%\Qwen2.5-3B-Instruct')"
+if %errorlevel%==0 (echo  Done!) else (echo  [ERROR] Download failed!)
 pause
 goto :MENU
 
 :DL_4
 echo.
 echo  Downloading Qwen2.5-1.5B-Instruct from ModelScope...
-"%PYTHONHOME%\python.exe" -m modelscope download --model Qwen/Qwen2.5-1.5B-Instruct --local_dir "%QP_MODELS_DIR%\Qwen2.5-1.5B-Instruct"
-echo  Done!
+"%PYTHONHOME%\python.exe" -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('Qwen/Qwen2.5-1.5B-Instruct', local_dir=r'%QP_MODELS_DIR%\Qwen2.5-1.5B-Instruct')"
+if %errorlevel%==0 (echo  Done!) else (echo  [ERROR] Download failed!)
 pause
 goto :MENU
 
@@ -123,8 +123,8 @@ echo.
 set /p "CUSTOM_URL=  Model path: "
 set /p "CUSTOM_NAME=  Local name: "
 echo  Downloading !CUSTOM_NAME! from ModelScope...
-"%PYTHONHOME%\python.exe" -m modelscope download --model !CUSTOM_URL! --local_dir "%QP_MODELS_DIR%\!CUSTOM_NAME!"
-echo  Done!
+"%PYTHONHOME%\python.exe" -c "from modelscope.hub.snapshot_download import snapshot_download; snapshot_download('!CUSTOM_URL!', local_dir=r'%QP_MODELS_DIR%\!CUSTOM_NAME!')"
+if %errorlevel%==0 (echo  Done!) else (echo  [ERROR] Download failed!)
 pause
 goto :MENU
 
